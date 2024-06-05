@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      zIndex: {
+        '1000': '1000',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
