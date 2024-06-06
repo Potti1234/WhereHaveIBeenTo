@@ -1,14 +1,15 @@
 import Link from "next/link"
-import {Menu, Package2} from "lucide-react"
+import {CircleUser, Menu, Package2} from "lucide-react"
 import CitySelector from "./citySelector"
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ModeToggle } from "@/components/modeToggle"
-import { createClient } from '@/utils/supabase/client'
 import HeaderDropdown from "./headerDropdown"
+import { createClient } from "@/utils/supabase/server"
 
 export default async function Header() {
+
   const supabase = createClient();
 
   const {
@@ -68,17 +69,19 @@ export default async function Header() {
           </SheetContent>
         </Sheet>
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 ">
-            <div className="ml-auto flex-1 sm:flex-initial relative">
-              <CitySelector/>
-            </div>
+          <div className="ml-auto flex-1 sm:flex-initial relative">
+            <CitySelector/>
+          </div>
           <ModeToggle />
-          {user ? (
-            <Button variant="secondary">Login</Button>
-          ) : (
+          {user !== null ? (
             <HeaderDropdown></HeaderDropdown>
+          ) : (
+            <Button asChild>
+              <Link href="/login">Sign In</Link>
+            </Button>
           )}
         </div>
       </header>
     </div>
-  )
+  );
 }

@@ -18,8 +18,9 @@ export function OAuthButtons() {
 
   return (
     <>
-      {oAuthProviders.map((provider) => (
+      {oAuthProviders.map((provider, index) => (
         <Button
+          key={index}
           className="w-full flex items-center justify-center gap-2"
           variant="outline"
           onClick={async () => {
