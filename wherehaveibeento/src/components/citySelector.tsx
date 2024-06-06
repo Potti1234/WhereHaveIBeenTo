@@ -17,7 +17,7 @@ import {
 
 import { createClient } from '@/utils/supabase/client'
 
-import type { City } from '@/utils/supabase/databaseTypes'
+import type { City } from '@/types/customn'
 
 export default function CitySelector({ ...props }: DialogProps) {
   const [open, setOpen] = React.useState(false)
@@ -85,13 +85,13 @@ export default function CitySelector({ ...props }: DialogProps) {
             {cities?.map((city) => (
                 <CommandItem
                   key={city.id}
-                  value={city.name}
+                  value={city.name ?? undefined}
                   onSelect={() => {
                     runCommand(() => console.log("Adding", city.name))
                   }}
                 >
                   <File className="mr-2 h-4 w-4" />
-                  {city.name}
+                  {city.name ?? undefined}
                 </CommandItem>
               ))}
           </CommandGroup>
