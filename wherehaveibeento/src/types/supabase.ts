@@ -37,7 +37,22 @@ export type Database = {
           state_id?: number | null
           wikiDataId?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "city_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "country"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "city_state_id_fkey"
+            columns: ["state_id"]
+            isOneToOne: false
+            referencedRelation: "state"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       country: {
         Row: {
@@ -114,6 +129,29 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          id: string
+          profile_picture_url: string | null
+        }
+        Insert: {
+          id: string
+          profile_picture_url?: string | null
+        }
+        Update: {
+          id?: string
+          profile_picture_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       state: {
         Row: {
           country_id: number | null
@@ -136,7 +174,51 @@ export type Database = {
           state_code?: string | null
           type?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "state_country_id_fkey"
+            columns: ["country_id"]
+            isOneToOne: false
+            referencedRelation: "country"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visited_city: {
+        Row: {
+          city_id: number | null
+          created_at: string
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          city_id?: number | null
+          created_at?: string
+          id?: number
+          user_id?: string | null
+        }
+        Update: {
+          city_id?: number | null
+          created_at?: string
+          id?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visited_city_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "city"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "visited_city_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

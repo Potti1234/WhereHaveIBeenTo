@@ -2,7 +2,7 @@
 
 import React from "react"
 import { DialogProps } from "@radix-ui/react-alert-dialog"
-import { File } from "lucide-react"
+import { Plus } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -17,15 +17,18 @@ import {
 
 import { createClient } from '@/utils/supabase/client'
 
-import type { City } from '@/types/customn'
+export const revalidate = 0
 
 export default function CitySelector({ ...props }: DialogProps) {
   const [open, setOpen] = React.useState(false)
   const supabase = createClient()
-  const [cities, setCities] = React.useState<(City[])>([]);
+  const [cities, setCities] = React.useState<(any[])>([]);
+  const [user_id, setUserId] = React.useState<string>("");
 
-  const fetchCities = async () => {
-    const { data, error } = await supabase.from('city').select('*')
+  const fetchCities = async (input : string) => {
+    const { data, error } = await supabase.from('city')
+    .select(`name, id, latitude, longitude, country ( name, iso2 ), state ( name )`)
+    .ilike('name', `${input}%`).limit(50)
     if (error) {
       console.error(error)
     } else {
@@ -34,7 +37,15 @@ export default function CitySelector({ ...props }: DialogProps) {
   }
 
   React.useEffect(() => {
-    fetchCities()
+    fetchCities("")
+
+    supabase.auth.getUser().then(({ data, error }) => {
+      if(error){
+        console.error("Error getting user", error)
+        return;
+      }
+      setUserId(data.user.id)
+    })
 
     const down = (e: KeyboardEvent) => {
       if ((e.key === "a" && (e.metaKey || e.ctrlKey)) || e.key === "/") {
@@ -61,6 +72,17 @@ export default function CitySelector({ ...props }: DialogProps) {
     command()
   }, [])
 
+  const addCity = (city: any) => {
+    supabase.from('visited_city').insert([
+      { user_id: user_id, city_id: city.id }
+    ]).then(({error}) => {
+      if(error){
+        console.error("Error adding city", error)
+        return;
+      }
+    })
+  }
+
   return (
     <>
       <Button
@@ -78,22 +100,23 @@ export default function CitySelector({ ...props }: DialogProps) {
         </kbd>
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a city or search..." />
+        <CommandInput placeholder="Type a city or search..." onInput={(e) => fetchCities((e.target as HTMLInputElement).value)}/>
         <CommandList>
           <CommandEmpty>No Cities found.</CommandEmpty>
           <CommandGroup heading="Cities">
-            {cities?.map((city) => (
-                <CommandItem
-                  key={city.id}
-                  value={city.name ?? undefined}
-                  onSelect={() => {
-                    runCommand(() => console.log("Adding", city.name))
-                  }}
-                >
-                  <File className="mr-2 h-4 w-4" />
-                  {city.name ?? undefined}
-                </CommandItem>
-              ))}
+            {cities.map((city) => (
+              <CommandItem
+                key={city.id}
+                value={city.name ?? undefined + " " + city.country_id ?? undefined + " " + city.state_id ?? undefined}
+                onSelect={() => {
+                  runCommand(() => addCity(city))
+                }}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                <img src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${city.country.iso2}.svg`} alt="Flag" className="mr-2 h-4 w-4" />
+                {`${city.name ?? undefined} / ${city.state.name ?? undefined} / ${city.country.name ?? undefined}`}
+              </CommandItem>
+            ))}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
