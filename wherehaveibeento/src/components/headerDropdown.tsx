@@ -49,7 +49,14 @@ export default function HeaderDropdown() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            <Link
+                href="/profile"
+                className="hover:text-foreground"
+              >
+                Profile
+              </Link>
+            </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <Link
@@ -59,7 +66,6 @@ export default function HeaderDropdown() {
                 Settings
               </Link>
             </DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => {signOut()}}>Sign out</DropdownMenuItem>
         </DropdownMenuContent>

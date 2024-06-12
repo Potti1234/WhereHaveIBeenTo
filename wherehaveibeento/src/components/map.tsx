@@ -6,8 +6,6 @@ import 'leaflet/dist/leaflet.css';
 import React from 'react';
 import { createClient } from '@/utils/supabase/client';
 
-export const revalidate = 0
-
 export default function Map() {
   const supabase = createClient()
   const [cities, setCities] = React.useState<(any[])>([]);

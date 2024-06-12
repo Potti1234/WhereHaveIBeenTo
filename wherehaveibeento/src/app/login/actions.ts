@@ -24,7 +24,7 @@ export async function emailLogin(formData: FormData) {
     }
 
     revalidatePath('/', 'layout')
-    redirect('/Map')
+    redirect('/map')
 }
 
 export async function signup(formData: FormData) {

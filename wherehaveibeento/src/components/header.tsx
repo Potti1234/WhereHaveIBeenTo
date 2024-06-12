@@ -28,7 +28,7 @@ export default async function Header() {
             <span className="sr-only">Home</span>
           </Link>
           <Link
-            href="/Map"
+            href="/map"
             className="text-muted-foreground transition-colors hover:text-foreground"
           >
             Map
@@ -60,7 +60,7 @@ export default async function Header() {
                 Home
               </Link>
               <Link
-                href="/Map"
+                href="/map"
                 className="text-muted-foreground hover:text-foreground"
               >
                 Map

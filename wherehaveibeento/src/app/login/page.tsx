@@ -25,7 +25,7 @@ export default async function Login({
   } = await supabase.auth.getUser();
 
   if (user) {
-    return redirect("/Map");
+    return redirect("/map");
   }
 
   return (
