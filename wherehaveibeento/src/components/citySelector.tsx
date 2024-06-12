@@ -27,8 +27,8 @@ export default function CitySelector({ ...props }: DialogProps) {
 
   const fetchCities = async (input : string) => {
     const { data, error } = await supabase.from('city')
-    .select(`name, id, latitude, longitude, country ( name, iso2 ), state ( name )`)
-    .ilike('name', `${input}%`).limit(50)
+    .select(`name, unaccent_name, id, latitude, longitude, country ( name, iso2 ), state ( name )`)
+    .ilike('unaccent_name', `${input}%`).limit(50).order('name', { ascending: true })
     if (error) {
       console.error(error)
     } else {
@@ -107,7 +107,7 @@ export default function CitySelector({ ...props }: DialogProps) {
             {cities.map((city) => (
               <CommandItem
                 key={city.id}
-                value={city.name ?? undefined + " " + city.country_id ?? undefined + " " + city.state_id ?? undefined}
+                value={city.unaccent_name ?? undefined + " " + city.country_id ?? undefined + " " + city.state_id ?? undefined}
                 onSelect={() => {
                   runCommand(() => addCity(city))
                 }}
