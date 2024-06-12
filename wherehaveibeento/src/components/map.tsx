@@ -5,10 +5,12 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import React from 'react';
 import { createClient } from '@/utils/supabase/client';
+import { Button } from './ui/button';
 
 export default function Map() {
   const supabase = createClient()
   const [cities, setCities] = React.useState<(any[])>([]);
+  const [user_id, setUserId] = React.useState<string>("");
 
   const icon = L.icon({ iconUrl: "/images/marker-icon.png", iconSize: [25,41], iconAnchor: [12,41] });
 
@@ -25,6 +27,18 @@ export default function Map() {
     }
   }
 
+  const deleteVisitedCity = async (city_id : string) => {
+    const { error } = await supabase.from('visited_city')
+    .delete()
+    .eq('city_id', city_id).eq('user_id', user_id)
+
+    if (error) {
+      console.error(error)
+    } else {
+      fetchVisitedCities(user_id)
+    }
+  }
+
   React.useEffect(() => {
     supabase.auth.getUser().then(({ data, error }) => {
       if(error){
@@ -32,6 +46,7 @@ export default function Map() {
         return;
       }
       fetchVisitedCities(data.user.id)
+      setUserId(data.user.id)
     })
 
   }, [])
@@ -56,7 +71,10 @@ export default function Map() {
                 cities.map((city, index) => {
                   return (
                     <Marker position={[city.city.latitude, city.city.longitude]} key={index} icon={icon}>
-                      <Popup>{city.city.name}</Popup>
+                      <Popup>
+                        {city.city.name} <br />
+                        <Button onClick={() => deleteVisitedCity(city.city.id)}>Delete</Button>
+                      </Popup>
                     </Marker>
                   );
      })}

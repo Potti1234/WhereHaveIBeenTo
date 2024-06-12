@@ -49,15 +49,16 @@ export default function HeaderDropdown() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>
+          <DropdownMenuLabel> My Account </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
             <Link
                 href="/profile"
                 className="hover:text-foreground"
               >
                 Profile
               </Link>
-            </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+            </DropdownMenuItem>
           <DropdownMenuItem>
             <Link
                 href="/settings/general"
