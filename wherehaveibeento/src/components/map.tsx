@@ -19,7 +19,6 @@ export default function Map() {
     .select(`city ( name, id, latitude, longitude)`)
     .eq('user_id', user_id)
 
-    console.log(data)
     if (error) {
       console.error(error)
     } else {
