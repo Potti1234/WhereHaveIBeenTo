@@ -33,6 +33,12 @@ export default async function Header() {
           >
             Map
           </Link>
+          <Link
+            href="/explore"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Explore
+          </Link>
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -64,6 +70,12 @@ export default async function Header() {
                 className="text-muted-foreground hover:text-foreground"
               >
                 Map
+              </Link>
+              <Link
+                href="/explore"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Explore
               </Link>
             </nav>
           </SheetContent>

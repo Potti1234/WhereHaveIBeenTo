@@ -17,6 +17,7 @@ export type Database = {
           longitude: number | null
           name: string | null
           state_id: number | null
+          unaccent_name: string | null
           wikiDataId: string | null
         }
         Insert: {
@@ -26,6 +27,7 @@ export type Database = {
           longitude?: number | null
           name?: string | null
           state_id?: number | null
+          unaccent_name?: string | null
           wikiDataId?: string | null
         }
         Update: {
@@ -35,6 +37,7 @@ export type Database = {
           longitude?: number | null
           name?: string | null
           state_id?: number | null
+          unaccent_name?: string | null
           wikiDataId?: string | null
         }
         Relationships: [
@@ -222,10 +225,111 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      distinct_visited_countries: {
+        Row: {
+          iso2: string | null
+          name: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visited_city_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      distinct_visited_states: {
+        Row: {
+          country_name: string | null
+          name: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visited_city_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      get_20_random_countries: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          capital: string | null
+          currency: string | null
+          currency_name: string | null
+          currency_symbol: string | null
+          emoji: string | null
+          emojiU: string | null
+          id: number
+          iso2: string | null
+          iso3: string | null
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          nationality: string | null
+          native: string | null
+          numeric_code: number | null
+          phone_code: string | null
+          region: string | null
+          region_id: number | null
+          subregion: string | null
+          subregion_id: number | null
+          timezones: string | null
+          tld: string | null
+        }[]
+      }
+      get_random_cities: {
+        Args: {
+          amount: number
+        }
+        Returns: {
+          country_id: number | null
+          id: number
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          state_id: number | null
+          unaccent_name: string | null
+          wikiDataId: string | null
+        }[]
+      }
+      get_random_countries: {
+        Args: {
+          amount: number
+        }
+        Returns: {
+          capital: string | null
+          currency: string | null
+          currency_name: string | null
+          currency_symbol: string | null
+          emoji: string | null
+          emojiU: string | null
+          id: number
+          iso2: string | null
+          iso3: string | null
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          nationality: string | null
+          native: string | null
+          numeric_code: number | null
+          phone_code: string | null
+          region: string | null
+          region_id: number | null
+          subregion: string | null
+          subregion_id: number | null
+          timezones: string | null
+          tld: string | null
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
