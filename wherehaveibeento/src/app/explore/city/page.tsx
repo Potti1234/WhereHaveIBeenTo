@@ -26,7 +26,7 @@ export default async function Page() {
                 <h1 className="text-3xl font-bold text-center">Explore Cities</h1>
                 <div className="mx-auto w-full max-w-6xl items-center gap-6 grid gap-6 text-sm text-muted-foreground">
                     <div className="grid grid-cols-3 gap-4">
-                        {cities.map((city: any, index:any) => (
+                        {cities && cities.map((city: any, index:any) => (
                           <div key={index}>
                             <CityCard city={city}/>
                           </div>
