@@ -26,11 +26,11 @@ export default async function Page() {
                 <h1 className="text-3xl font-bold text-center">Explore Countries</h1>
                 <div className="mx-auto w-full max-w-6xl items-center gap-6 grid gap-6 text-sm text-muted-foreground">
                     <div className="grid grid-cols-3 gap-4">
-                        {countries.map((country: any, index: any) => (
+                        {countries && (countries.map((country: any, index: any) => (
                           <div key={index}>
                             <CountryCard country={country}/>
                           </div>
-                        ))}
+                        )))}
                     </div>
                 </div>
             </main>
