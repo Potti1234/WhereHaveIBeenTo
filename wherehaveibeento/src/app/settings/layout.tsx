@@ -25,7 +25,8 @@ export default function RootLayout({
   return (
     <SettingsNavigation
       highlightedLink={pathname.split("/")[2]}
-      children={children}
-    ></SettingsNavigation>
+    >
+      {children}
+    </SettingsNavigation>
   );
 }
