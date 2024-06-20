@@ -9,6 +9,7 @@ import { Button } from './ui/button';
 import { Label } from '@radix-ui/react-dropdown-menu';
 import { useRouter } from 'next/navigation';
 import { MapScopeSelector } from './MapScopeSelector';
+import WriteArticleModal from './writeArticleModal';
 
 export default function WorldMap() {
   const supabase = createClient()
@@ -130,6 +131,7 @@ export default function WorldMap() {
                         />
                         <Button onClick={() => deleteVisitedCity(city.city.id)}>Delete</Button>
                         <Button onClick={() => router.push(`/explore/city/${city.city.id}`)}>View Information</Button>
+                        <WriteArticleModal city_id={city.city.id}/>
                       </Popup>
                     </Marker>
                   );
