@@ -24,14 +24,17 @@ import {
 import { ArticleEditor } from "./articleEditor"
 import { saveArticleClient } from "@/daos/article"
 import { DialogClose } from "@radix-ui/react-dialog"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 
 export default function WriteArticleModal(props: { city_id: number}) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const [articleValue, setArticleValue] = React.useState<any>();
+  const [titleValue, setTitleValue] = React.useState<string>("");
 
     const saveArticle = () => {
-        saveArticleClient(JSON.stringify(articleValue), props.city_id);
+        saveArticleClient(JSON.stringify(articleValue), titleValue, props.city_id);
     }
 
   if (isDesktop) {
@@ -47,6 +50,10 @@ export default function WriteArticleModal(props: { city_id: number}) {
               Write Article about your trip to this city.
             </DialogDescription>
           </DialogHeader>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label>Title</Label>
+            <Input type="string" id="title" placeholder="Title" onChange={(e) => setTitleValue(e.target.value)}/>
+          </div>
           <ArticleEditor onChangeCallback={setArticleValue} initialValue={null} readOnly={false}/>
           <DialogFooter>
             <DialogClose asChild>
@@ -73,6 +80,10 @@ export default function WriteArticleModal(props: { city_id: number}) {
           Write Article about your trip to this city.
           </DrawerDescription>
         </DrawerHeader>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+            <Label>Title</Label>
+            <Input type="string" id="title" placeholder="Title" onChange={(e) => setTitleValue(e.target.value)}/>
+        </div>
         <ArticleEditor onChangeCallback={setArticleValue} initialValue={null} readOnly={false}/>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>

@@ -1,13 +1,13 @@
 import { createClient } from "@/utils/supabase/client"
 import getCurrentUserId from "./user"
 
-export async function saveArticleClient(content: string, city_id: number) {
+export async function saveArticleClient(content: string, title: string, city_id: number) {
     const supabase = createClient()
 
-    const user_id = await getCurrentUserId();
+    const author_id = await getCurrentUserId();
 
     supabase.from('article')
-    .insert({ city_id, content: content, author_id: user_id})
+    .insert({ author_id, city_id, content, title})
     .then((value) => {
         if (value.error) {
             console.error(value.error)
