@@ -22,7 +22,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { ArticleEditor } from "./articleEditor"
-import saveArticleClient from "@/daos/article"
+import { saveArticleClient } from "@/daos/article"
 import { DialogClose } from "@radix-ui/react-dialog"
 
 export default function WriteArticleModal(props: { city_id: number}) {
@@ -47,7 +47,7 @@ export default function WriteArticleModal(props: { city_id: number}) {
               Write Article about your trip to this city.
             </DialogDescription>
           </DialogHeader>
-          <ArticleEditor onChangeCallback={setArticleValue}/>
+          <ArticleEditor onChangeCallback={setArticleValue} initialValue={null} readOnly={false}/>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="default" onClick={saveArticle}>Save</Button>
@@ -73,7 +73,7 @@ export default function WriteArticleModal(props: { city_id: number}) {
           Write Article about your trip to this city.
           </DrawerDescription>
         </DrawerHeader>
-        <ArticleEditor onChangeCallback={setArticleValue}/>
+        <ArticleEditor onChangeCallback={setArticleValue} initialValue={null} readOnly={false}/>
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="default" onClick={saveArticle}>Save</Button>
