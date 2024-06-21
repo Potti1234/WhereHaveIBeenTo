@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { MapScopeSelector } from './MapScopeSelector';
 import WriteArticleModal from './writeArticleModal';
 
-export default function WorldMap() {
+export default function WorldMap(props : {user_id: string | null}) {
   const supabase = createClient()
   const [cities, setCities] = React.useState<(any[])>([]);
   const [user_id, setUserId] = React.useState<string>("");
@@ -79,15 +79,21 @@ export default function WorldMap() {
   }
 
   React.useEffect(() => {
+    fetchCountries()
+    getCountryGeoJson()
+    if(props.user_id){
+      fetchVisitedCities(props.user_id)
+      setUserId(props.user_id)
+      return;
+    }
+
     supabase.auth.getUser().then(({ data, error }) => {
       if(error){
         console.error("Error getting user", error)
         return;
       }
-      fetchCountries()
       fetchVisitedCities(data.user.id)
       setUserId(data.user.id)
-      getCountryGeoJson()
     })
 
   }, [])

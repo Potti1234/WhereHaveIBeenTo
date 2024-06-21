@@ -5,10 +5,10 @@ const Map = dynamic(
   { ssr: false }
 )
 
-export default function Page() {
+export default function Page({ params }: { params: { user_id: string } }) {
     return (
       <div>
-        <Map user_id={null}/>
+        <Map user_id={params.user_id}/>
       </div>
     );
   }
