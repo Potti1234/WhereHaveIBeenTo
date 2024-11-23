@@ -33,7 +33,7 @@ jobs:
 
     # Build the Docker image
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag $DOCKER_IMAGE_NAME:$RELEASE_VERSION
+      run: docker build . --file pocketbase/Dockerfile --tag $DOCKER_IMAGE_NAME:$RELEASE_VERSION
 
     # Tag the Docker Images
     - name: Tag the image for the private registry $DOCKER_REGISTRY_URL
