@@ -4,8 +4,6 @@ WORKDIR /pocketbasego
 
 COPY ./pocketbase .
 
-RUN go mod init pocketbasego
-
 RUN go get github.com/pocketbase/pocketbase@v0.22.23 
 
 RUN go mod tidy
