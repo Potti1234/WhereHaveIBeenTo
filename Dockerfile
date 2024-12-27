@@ -1,4 +1,4 @@
-FROM golang:1.19.2-bullseye
+FROM golang:1.23.3-bullseye
 
 WORKDIR /pocketbasego
 
@@ -12,4 +12,4 @@ RUN go mod tidy
 
 EXPOSE 8090
 
-CMD [ "go", "run", "main.go", "serve" ] 
+CMD [ "go", "run", "main.go", "serve", "--http=0.0.0.0:8090"] 
