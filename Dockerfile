@@ -11,6 +11,8 @@ WORKDIR /app
 
 COPY --from=builder-go /app/wherehaveibeento .
 RUN chmod +x /app/wherehaveibeento
+# Create directory for pb_data
+RUN mkdir -p /app/wherehaveibeento/pb_data
 
 EXPOSE 8090
 
