@@ -25,12 +25,12 @@ func init() {
 
 		record := core.NewRecord(superusers)
 
-		record.Set("email", os.Getenv("ADMIN_EMAIL"))
-		record.Set("password", os.Getenv("ADMIN_PASSWORD"))
+		record.Set("email", os.Getenv("POCKETBASE_ADMIN_EMAIL"))
+		record.Set("password", os.Getenv("POCKETBASE_ADMIN_PASSWORD"))
 
 		return app.Save(record)
 	}, func(app core.App) error { // optional revert operation
-		record, _ := app.FindAuthRecordByEmail(core.CollectionNameSuperusers, os.Getenv("ADMIN_EMAIL"))
+		record, _ := app.FindAuthRecordByEmail(core.CollectionNameSuperusers, os.Getenv("POCKETBASE_ADMIN_EMAIL"))
 		if record == nil {
 			return nil // probably already deleted
 		}
