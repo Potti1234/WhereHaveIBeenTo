@@ -9,10 +9,10 @@ RUN go build -tags production -o wherehaveibeento
 FROM alpine:latest AS runner
 WORKDIR /app
 
+RUN mkdir -p /app/pb_data
+
 COPY --from=builder-go /app/wherehaveibeento .
 RUN chmod +x /app/wherehaveibeento
-# Create directory for pb_data
-RUN mkdir -p /app/wherehaveibeento/pb_data
 
 EXPOSE 8090
 
