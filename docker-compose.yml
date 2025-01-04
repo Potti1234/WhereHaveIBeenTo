@@ -10,11 +10,12 @@ services:
     restart: unless-stopped
     environment:
       - MAILER_CRON_SCHEDULE=${MAILER_CRON_SCHEDULE}
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     ports:
       - '8090:8090'
     volumes:
-      #- ./db:/app/db use this line for testing on localhost
-      - ../files/db:/app/db # (../files/ location for persistent volumes)
+      - ./pocketbase/pb_data:/app/wherehaveibeento/pb_data
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
       start_period: 5s
