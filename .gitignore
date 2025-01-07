@@ -1,2 +1,5 @@
 /data/geoJson/Outline/*
 /data/geoJSon/WithStates/*
+/data/data/*
+/data/edit_data/*
+/data/.env
