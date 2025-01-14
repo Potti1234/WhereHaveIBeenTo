@@ -1,35 +1,35 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Provider } from "@supabase/supabase-js";
-import { oAuthSignIn } from "./actions";
+'use client'
+
+import { Button } from '@/components/ui/button'
+import { handleOAuthLogin } from './actions'
 
 type OAuthProvider = {
-  name: Provider;
-  displayName: string;
-};
+  name: string
+  displayName: string
+}
 
-export function OAuthButtons() {
+export function OAuthSignIn () {
   const oAuthProviders: OAuthProvider[] = [
     {
-      name: "google",
-      displayName: "Google",
-    },
-  ];
+      name: 'google',
+      displayName: 'Google'
+    }
+  ]
 
   return (
     <>
       {oAuthProviders.map((provider, index) => (
         <Button
           key={index}
-          className="w-full flex items-center justify-center gap-2"
-          variant="outline"
+          className='w-full flex items-center justify-center gap-2'
+          variant='outline'
           onClick={async () => {
-            await oAuthSignIn(provider.name);
+            await handleOAuthLogin(provider.name)
           }}
         >
           Login with {provider.displayName}
         </Button>
       ))}
     </>
-  );
+  )
 }

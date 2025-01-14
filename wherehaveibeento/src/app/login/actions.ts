@@ -3,43 +3,37 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-import { createClient } from '@/utils/supabase/server'
-import { Provider } from '@supabase/supabase-js'
-import { getURL } from '@/utils/helpers'
+import { loginWithPassword, createNewUser, logout, loginWithOAuth, checkUserIsLoggedIn } from '@/daos/user'
 
 export async function emailLogin(formData: FormData) {
-    const supabase = createClient()
-
-    // type-casting here for convenience
-    // in practice, you should validate your inputs
     const data = {
         email: formData.get('email') as string,
         password: formData.get('password') as string,
     }
 
-    const { error } = await supabase.auth.signInWithPassword(data)
-
-    if (error) {
+    await loginWithPassword(data.email, data.password).catch((error) => {
         redirect('/login?message=Could not authenticate user')
-    }
+    })
 
     revalidatePath('/', 'layout')
     redirect('/map')
 }
 
 export async function signup(formData: FormData) {
-    const supabase = createClient()
+    
 
-    // type-casting here for convenience
-    // in practice, you should validate your inputs
     const data = {
-        email: formData.get('email') as string,
-        password: formData.get('password') as string,
-    }
+        "password": formData.get('password') as string,
+        "passwordConfirm": formData.get('password') as string,
+        "email": formData.get('email') as string,
+        "name": "Test"
+    };
 
-    const { error } = await supabase.auth.signUp(data)
+    await createNewUser(data).catch((error) => {
+        redirect('/login?message=Could not authenticate user')
+    })
 
-    if (error) {
+    if (!checkUserIsLoggedIn()) {
         redirect('/login?message=Error signing up')
     }
 
@@ -48,28 +42,15 @@ export async function signup(formData: FormData) {
 }
 
 export async function signOut() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    logout()
     redirect('/login')
 }
 
-export async function oAuthSignIn(provider: Provider) {
-    if (!provider) {
-        return redirect('/login?message=No provider selected')
-    }
-
-    const supabase = createClient();
-    const redirectUrl = getURL("/auth/callback")
-    const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-            redirectTo: redirectUrl,
-        }
-    })
-
-    if (error) {
+export const handleOAuthLogin = async (provider: string) => {
+    try {
+      await loginWithOAuth(provider)
+      redirect('/map')
+    } catch (error) {
         redirect('/login?message=Could not authenticate user')
     }
-
-    return redirect(data.url)
-}
+  }
