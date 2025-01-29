@@ -15,49 +15,29 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
-            data: [
+            tanstack: [
               '@tanstack/react-query',
-              '@tanstack/react-router',
-              '@tanstack/react-table',
-              'pocketbase'
+              '@tanstack/react-router'
             ],
-
-            forms: [
-              'react-hook-form',
-              '@hookform/resolvers',
-              'zod',
-              'date-fns',
-              'react-day-picker'
-            ],
-
             ui: [
-              '@radix-ui/react-avatar',
-              '@radix-ui/react-checkbox',
               '@radix-ui/react-dialog',
               '@radix-ui/react-dropdown-menu',
-              '@radix-ui/react-icons',
               '@radix-ui/react-label',
-              '@radix-ui/react-popover',
-              '@radix-ui/react-select',
-              '@radix-ui/react-separator',
               '@radix-ui/react-slot',
-              '@radix-ui/react-switch',
-              '@radix-ui/react-toggle',
-              '@radix-ui/react-toggle-group',
               'class-variance-authority',
               'clsx',
-              'next-themes',
-              'lucide-react',
-              'cmdk',
-              'vaul',
-              'sonner'
+              'lucide-react'
             ]
           }
         }
       }
     },
     publicDir: './public',
-    resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src')
+      }
+    },
     server: {
       proxy: {
         '/api': {

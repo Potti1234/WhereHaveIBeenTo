@@ -5,11 +5,11 @@ import {
   FormLabel,
   FormMessage
 } from '@/components/ui/form'
-import { cn } from '@/lib/shadcn'
+import { cn } from '@/lib/utils'
 import { FieldValues, Path, UseFormReturn } from 'react-hook-form'
-import { Textarea } from '../ui/textarea'
+import { Textarea } from '@/components/ui/textarea'
 
-export default function TextAreaField<T extends FieldValues>({
+export default function TextAreaField<T extends FieldValues> ({
   form,
   name,
   label,
@@ -34,7 +34,7 @@ export default function TextAreaField<T extends FieldValues>({
       render={({ field }) => (
         <FormItem className={cn('w-full', hidden && 'hidden')}>
           <div className='flex items-baseline justify-between'>
-            <FormLabel disabled={disabled}>{label}</FormLabel>
+            <FormLabel>{label}</FormLabel>
             <FormMessage className='text-xs font-normal' />
           </div>
           <FormControl>

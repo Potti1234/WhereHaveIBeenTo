@@ -74,7 +74,7 @@ export default function useAuth() {
         'Registration successful!',
         'Please check your inbox for a verification email'
       )
-      router.navigate({ to: '/login' })
+      router.navigate({ to: '/auth/login' })
     } catch (error) {
       errorToast('Could not register', error)
     }
@@ -124,7 +124,7 @@ export default function useAuth() {
     try {
       await confirmPasswordResetApi(password, passwordConfirm, token)
       successToast('Changed password', 'Your password has been updated')
-      router.navigate({ to: '/login' })
+      router.navigate({ to: '/auth/login' })
     } catch (error) {
       errorToast('Could not update password', error)
     }
@@ -159,7 +159,7 @@ export default function useAuth() {
         'Verification successful',
         'Your email address has been verified'
       )
-      router.navigate({ to: '/login' })
+      router.navigate({ to: '/auth/login' })
     } catch (error) {
       errorToast('Could not verify email by token', error)
     }

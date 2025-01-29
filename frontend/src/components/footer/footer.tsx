@@ -25,7 +25,7 @@ export default function Footer () {
           </a>
         </div>
         <p className='text-center md:text-right'>
-          <Link resetScroll={true} to='/privacy-policy'>
+          <Link resetScroll={true} to='/privacypolicy'>
             Privacy Policy
           </Link>
         </p>

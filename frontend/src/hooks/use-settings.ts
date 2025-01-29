@@ -8,13 +8,11 @@ import {
   useQueryClient,
   useSuspenseQuery
 } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { updateUserProfilePicture } from '@/services/api-auth'
 import useAuth from './use-auth'
 
 export default function useSettings() {
-  const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { trackEvent } = usePlausible()
   const { data, isLoading } = useSuspenseQuery(userQueryOptions)

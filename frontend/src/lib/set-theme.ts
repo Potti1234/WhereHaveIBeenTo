@@ -1,4 +1,4 @@
-import { Theme } from '@/schemas/settings-schema'
+export type Theme = 'light' | 'dark' | 'system'
 
 export function setTheme(theme: Theme | undefined) {
   const root = window.document.documentElement

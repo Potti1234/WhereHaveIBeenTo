@@ -129,7 +129,7 @@ export default function GeneralSettingsPage () {
 export const Route = createFileRoute('/settings/general')({
   component: GeneralSettingsPage,
   beforeLoad: () => {
-    if (!checkUserIsLoggedIn()) throw redirect({ to: '/login' })
+    if (!checkUserIsLoggedIn()) throw redirect({ to: '/auth/login' })
     return { getTitle: () => 'General Settings' }
   }
 })

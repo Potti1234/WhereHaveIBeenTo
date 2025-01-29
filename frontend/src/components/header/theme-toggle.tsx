@@ -1,4 +1,4 @@
-import { setTheme } from '@/lib/set-theme'
+import { setTheme, Theme } from '@/lib/set-theme'
 import { Moon, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export default function ThemeToggle () {
-  const handleThemeChange = (value: string) => {
+  const handleThemeChange = (value: Theme) => {
     if (!value) return
     setTheme(value)
   }
