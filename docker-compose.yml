@@ -1,12 +1,12 @@
 services:
-  wherehaveibeento:
+  citiesbeen:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - DOMAIN_NAME=${DOMAIN_NAME}
         - PLAUSIBLE_API_HOST=${PLAUSIBLE_API_HOST}
-    container_name: wherehaveibeento
+    container_name: citiesbeen
     restart: unless-stopped
     environment:
       - MAILER_CRON_SCHEDULE=${MAILER_CRON_SCHEDULE}
@@ -15,7 +15,7 @@ services:
     ports:
       - '8090:8090'
     volumes:
-      - ./pocketbase/pb_data:/app/pb_data
+      - ./citiesbeen/pb_data:/app/pb_data
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:8090/api/health || exit 1
       start_period: 5s

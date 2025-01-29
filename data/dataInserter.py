@@ -4,6 +4,8 @@ import pandas as pd
 import os 
 from dotenv import load_dotenv
 import time
+import glob
+import json
 
 load_dotenv()
 BASE_URL = os.getenv('POCKETBASE_URL')
@@ -350,13 +352,46 @@ def insert_city_data_all():
         insert_city_data(start_row=start, end_row=end)
         time.sleep(60)
 
+def insert_geojson_data(type: str):
+    token = get_admin_token()
+    headers = {
+        "Authorization": "{}".format(token)
+    }
+    #Read all geojson files in data/geoJson/WithStates and data/geoJson/Outline
+    data = glob.glob(f'data/geoJson/{type}/*.geojson')
+    for file in data:
+        # Get the country ISO2 from the file name
+        country_iso2 = file.split('\\')[-1].split('.')[0].upper()
+        #Get country id from pocketbase
+        country_id = requests.get(f"{BASE_URL}/api/collections/country/records?filter=iso2='{country_iso2}'", headers=headers)
+        country_id = country_id.json()["items"][0]["id"]
+        #Insert the geojson file into the country
+        with open(file, 'r') as f:
+            geojson_data = json.load(f)
+            data = {
+                'country': country_id,
+                'json': geojson_data,
+                'type': type
+            }
+            
+            # Create new record
+            response = requests.post(
+                f"{BASE_URL}/api/collections/geo_json/records",
+                headers=headers,
+                json=data
+            )
+            response.raise_for_status()
+            print(f"Created: {country_iso2}")
+
 def main():
     #create_region_subregion_csv()
     #insert_region_data()
     #insert_subregion_data()
     #insert_country_data()
     #insert_state_data()
-    insert_city_data_all()
+    #insert_city_data_all()
+    insert_geojson_data('Outline')
+    insert_geojson_data('WithStates')
 
 if __name__ == "__main__":
     main()
