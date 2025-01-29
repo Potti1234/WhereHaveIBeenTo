@@ -3,6 +3,7 @@ FROM oven/bun AS builder-bun
 WORKDIR /app
 
 COPY . .
+RUN cd frontend
 RUN bun install --frozen-lockfile
 
 ARG DOMAIN_NAME

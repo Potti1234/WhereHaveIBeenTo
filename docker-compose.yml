@@ -9,7 +9,6 @@ services:
     container_name: citiesbeen
     restart: unless-stopped
     environment:
-      - MAILER_CRON_SCHEDULE=${MAILER_CRON_SCHEDULE}
       - POCKETBASE_ADMIN_EMAIL=${POCKETBASE_ADMIN_EMAIL}
       - POCKETBASE_ADMIN_PASSWORD=${POCKETBASE_ADMIN_PASSWORD}
     ports:
