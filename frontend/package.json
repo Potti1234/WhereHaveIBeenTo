@@ -4,11 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "typegen": "npx pocketbase-typegen --db ../pocketbase/pb_data/data.db --out ./src/types/pocketbase-types.ts"
+    "typegen": "npx pocketbase-typegen --db ../pocketbase/pb_data/data.db --out ./src/types/pocketbase-types.ts",
+    "dev:client": "vite dev",
+    "dev:server": "cd ../backend && go run .  serve",
+    "dev": "npm run dev:client & npm run dev:server",
+    "build:client": "npm run lint && vite build",
+    "build:server": "cd ../backend && go build -tags production -o ../citiesbeen",
+    "build": "npm run build:client && npm run build:server",
+    "preview": "../backend/citiesbeen serve"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

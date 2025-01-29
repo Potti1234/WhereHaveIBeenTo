@@ -34,6 +34,7 @@ func main() {
 		Automigrate: isGoRun,
 	})
 
+	app.mountFs()
 	app.setupAuthHooks()
 	app.disableHealthRouteLogging()
 

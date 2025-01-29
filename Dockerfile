@@ -9,7 +9,7 @@ ARG DOMAIN_NAME
 ARG PLAUSIBLE_API_HOST
 RUN cd frontend && echo "VITE_DOMAIN=${DOMAIN_NAME}\nVITE_PLAUSIBLE_API_HOST=${PLAUSIBLE_API_HOST}" > .env
 
-RUN cd frontend && npm run build
+RUN cd frontend && npm run build:client
 
 
 # Build backend
