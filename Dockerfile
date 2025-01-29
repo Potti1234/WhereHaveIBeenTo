@@ -1,22 +1,22 @@
 # Build frontend
-FROM oven/bun AS builder-bun
+FROM node:20-alpine AS builder-node
 WORKDIR /app
 
 COPY . .
-RUN cd frontend
-RUN bun install --frozen-lockfile
+RUN cd frontend && npm ci
 
 ARG DOMAIN_NAME
 ARG PLAUSIBLE_API_HOST
-RUN echo "VITE_DOMAIN=${DOMAIN_NAME}\nVITE_PLAUSIBLE_API_HOST=${PLAUSIBLE_API_HOST}" > .env
+RUN cd frontend && echo "VITE_DOMAIN=${DOMAIN_NAME}\nVITE_PLAUSIBLE_API_HOST=${PLAUSIBLE_API_HOST}" > .env
 
-RUN bun run build
+RUN cd frontend && npm run build
+
 
 # Build backend
 FROM golang:1.23-alpine AS builder-go
 WORKDIR /app
 
-COPY --from=builder-bun /app/backend .
+COPY --from=builder-node /app/backend .
 RUN go mod download
 RUN go build -tags production -o citiesbeen
 
