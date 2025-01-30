@@ -17,6 +17,7 @@ FROM golang:1.23-alpine AS builder-go
 WORKDIR /app
 
 COPY --from=builder-node /app/backend .
+COPY --from=builder-node /app/frontend/dist ./dist
 RUN go mod download
 RUN go build -tags production -o citiesbeen
 
