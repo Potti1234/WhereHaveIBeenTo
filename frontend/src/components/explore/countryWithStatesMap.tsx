@@ -11,8 +11,8 @@ export default function CountryWithStatesMap (props: {
 }) {
   const { withStatesGeoJson } = useGeoJson(props.country?.id)
 
-  const onEachState = (country: any, layer: any) => {
-    const countryName = country.properties.name
+  const onEachState = (country: GeoJSON.Feature, layer: L.Layer) => {
+    const countryName = country.properties?.name || 'Unknown'
     layer.bindPopup(countryName)
   }
 

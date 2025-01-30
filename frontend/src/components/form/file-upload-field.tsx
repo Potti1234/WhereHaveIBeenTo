@@ -117,7 +117,9 @@ export default function UploadFileField<T extends FieldValues> ({
 
                     form.clearErrors(name)
                     setImageFile(uploadedFile)
-                    uploadedFile && onChange(uploadedFile)
+                    if (uploadedFile) {
+                      onChange(uploadedFile)
+                    }
                   }}
                 />
               </div>

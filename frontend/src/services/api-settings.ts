@@ -36,14 +36,15 @@ export async function updateUserSettings(
         : { name, avatar }
     )
 
-  userIsChangingPassword &&
-    (await loginWithPassword(newUserData.email, password))
+  if (userIsChangingPassword) {
+    await loginWithPassword(newUserData.email, password)
+  }
 
   const settings = await pb
     .collection('settings')
     .getFirstListItem(`user="${newUserData.id}"`)
 
-  settings &&
-    (await pb.collection('settings').update(settings.id, {
-    }))
+  if (settings) {
+    await pb.collection('settings').update(settings.id, {})
+  }
 }

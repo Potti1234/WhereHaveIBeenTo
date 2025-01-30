@@ -9,11 +9,10 @@ export function useDistinctVisitedStates(userId: string, countryName?: string) {
     distinctVisitedStatesCountQueryOptions(userId)
   )
 
-  const { data: statesInCountry } = countryName
-    ? useSuspenseQuery(
-        distinctVisitedStatesQueryOptions(userId, countryName)
-      )
-    : { data: undefined }
+  const statesInCountryQuery = useSuspenseQuery(
+    distinctVisitedStatesQueryOptions(userId, countryName ?? '')
+  )
+  const statesInCountry = countryName ? statesInCountryQuery.data : undefined
 
   return {
     statesCount,

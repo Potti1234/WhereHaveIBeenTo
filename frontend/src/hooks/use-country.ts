@@ -9,9 +9,8 @@ import { errorToast } from '@/lib/toast'
 export function useCountry(countryId?: string) {
   const { data: countries } = useSuspenseQuery(countriesQueryOptions)
 
-  const { data: country } = countryId 
-    ? useSuspenseQuery(countryQueryOptions(countryId))
-    : { data: undefined }
+  const countryQuery = useSuspenseQuery(countryQueryOptions(countryId ?? ''))
+  const { data: country } = countryId ? countryQuery : { data: undefined }
 
   const getRandomCountryList = async (amount: number) => {
     try {

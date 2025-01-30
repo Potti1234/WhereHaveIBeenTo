@@ -8,13 +8,11 @@ import {
 export function useGeoJson(countryId?: string) {
   const { data: worldGeoJson } = useSuspenseQuery(worldGeoJsonQueryOptions)
 
-  const { data: outlineGeoJson } = countryId
-    ? useSuspenseQuery(outlineGeoJsonQueryOptions(countryId))
-    : { data: undefined }
+  const outlineGeoJsonQuery = useSuspenseQuery(outlineGeoJsonQueryOptions(countryId ?? ''))
+  const withStatesGeoJsonQuery = useSuspenseQuery(withStatesGeoJsonQueryOptions(countryId ?? ''))
 
-  const { data: withStatesGeoJson } = countryId
-    ? useSuspenseQuery(withStatesGeoJsonQueryOptions(countryId))
-    : { data: undefined }
+  const outlineGeoJson = countryId ? outlineGeoJsonQuery.data : undefined
+  const withStatesGeoJson = countryId ? withStatesGeoJsonQuery.data : undefined
 
   return {
     worldGeoJson,

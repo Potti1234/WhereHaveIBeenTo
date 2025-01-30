@@ -44,7 +44,9 @@ function VerifyEmailPage () {
   })
 
   useEffect(() => {
-    token && verifyEmailByToken(token)
+    if (token) {
+      verifyEmailByToken(token)
+    }
     startEmailSendCountdown({ resetTargetTime: false })
   }, [])
 

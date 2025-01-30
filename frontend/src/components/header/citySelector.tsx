@@ -16,6 +16,7 @@ import {
 import useAuth from '@/hooks/use-auth'
 import { useCity } from '@/hooks/use-city'
 import { useVisitedCity } from '@/hooks/use-visited-city'
+import type { CityWithCountryAndState } from '@/schemas/city-schema'
 
 export default function CitySelector ({ ...props }: DialogProps) {
   const [open, setOpen] = React.useState(false)
@@ -23,7 +24,7 @@ export default function CitySelector ({ ...props }: DialogProps) {
   const { user } = useAuth()
   const { searchCities } = useCity('')
   const { addVisitedCity, isAdding } = useVisitedCity(user?.id || '')
-  const [cities, setCities] = React.useState<any[]>([])
+  const [cities, setCities] = React.useState<CityWithCountryAndState[]>([])
 
   const fetchCities = async (input: string) => {
     if (!input) return
@@ -91,7 +92,9 @@ export default function CitySelector ({ ...props }: DialogProps) {
                   city.expand?.state?.name || ''
                 }`}
                 onSelect={() => {
-                  runCommand(() => addVisitedCity(city.id))
+                  if (city.id) {
+                    runCommand(() => addVisitedCity(city.id))
+                  }
                 }}
                 disabled={isAdding}
               >

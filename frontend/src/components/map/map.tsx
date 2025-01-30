@@ -63,9 +63,9 @@ export default function WorldMap ({ userId }: WorldMapProps) {
     removeVisitedCity(visitedCityId)
   }
 
-  const onEachCountry = (country: any, layer: any) => {
-    const countryName = country.properties.ADMIN
-    const countryIso2 = country.properties.ISO_A2
+  const onEachCountry = (country: GeoJSON.Feature, layer: L.Path) => {
+    const countryName = country.properties?.ADMIN || 'Unknown'
+    const countryIso2 = country.properties?.ISO_A2 || 'Unknown'
     const countryId = countriesMap.get(countryIso2)
     layer.bindPopup(
       countryName +

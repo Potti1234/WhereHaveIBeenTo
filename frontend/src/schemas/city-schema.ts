@@ -39,3 +39,5 @@ export type City = z.infer<typeof citySchema>
 export type CityWithExpand<T = unknown> = City & {
   expand?: T
 } 
+
+export type CityWithCountryAndState = z.infer<typeof cityWithCountryAndStateSchema>

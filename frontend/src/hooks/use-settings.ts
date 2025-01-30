@@ -11,6 +11,7 @@ import {
 import { useState } from 'react'
 import { updateUserProfilePicture } from '@/services/api-auth'
 import useAuth from './use-auth'
+import { UserWithSettings } from '@/schemas/user-schema'
 
 export default function useSettings() {
   const queryClient = useQueryClient()
@@ -35,7 +36,7 @@ export default function useSettings() {
       await queryClient.cancelQueries({ queryKey: ['user'] })
       const previousUser = queryClient.getQueryData(['user'])
 
-      queryClient.setQueryData(['user'], (currentUser: any) => ({
+      queryClient.setQueryData(['user'], (currentUser: UserWithSettings) => ({
         ...currentUser,
         name: newData.data.name,
         settings: {
