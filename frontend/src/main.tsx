@@ -6,13 +6,16 @@ import { routeTree } from './routeTree.gen'
 
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
+import ErrorPage from './routes/error'
+import NotFoundPage from './routes/not-found'
 const queryClient = new QueryClient()
 
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
+  defaultErrorComponent: ErrorPage,
+  defaultNotFoundComponent: NotFoundPage,
   context: { queryClient }
 })
 
