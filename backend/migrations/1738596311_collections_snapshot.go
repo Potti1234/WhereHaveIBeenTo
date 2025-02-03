@@ -1563,7 +1563,7 @@ func init() {
 					{
 						"autogeneratePattern": "",
 						"hidden": false,
-						"id": "_clone_vxNe",
+						"id": "_clone_Zypd",
 						"max": 0,
 						"min": 0,
 						"name": "name",
@@ -1578,7 +1578,7 @@ func init() {
 						"cascadeDelete": false,
 						"collectionId": "_pb_users_auth_",
 						"hidden": false,
-						"id": "_clone_6c3Z",
+						"id": "_clone_09Ci",
 						"maxSelect": 1,
 						"minSelect": 0,
 						"name": "user",
@@ -1590,7 +1590,7 @@ func init() {
 					{
 						"autogeneratePattern": "",
 						"hidden": false,
-						"id": "_clone_vRDZ",
+						"id": "_clone_6y5A",
 						"max": 0,
 						"min": 0,
 						"name": "country_name",
@@ -1609,7 +1609,7 @@ func init() {
 				"system": false,
 				"type": "view",
 				"updateRule": null,
-				"viewQuery": "select distinct\n  (ROW_NUMBER() OVER()) as id,\n  state.name,\n  visited_city.user,\n  country.name as country_name\nfrom\n  visited_city\nleft join city on visited_city.city = city.id\nleft join state on city.state = state.id\nleft join country on city.country = country.id;",
+				"viewQuery": "select distinct\n  (state.name || \"-\" || visited_city.user) as id,\n  state.name,\n  visited_city.user,\n  country.name as country_name\nfrom\n  visited_city\nleft join city on visited_city.city = city.id\nleft join state on city.state = state.id\nleft join country on city.country = country.id;",
 				"viewRule": ""
 			},
 			{
@@ -1633,7 +1633,7 @@ func init() {
 					{
 						"autogeneratePattern": "",
 						"hidden": false,
-						"id": "_clone_SCam",
+						"id": "_clone_CMLt",
 						"max": 0,
 						"min": 0,
 						"name": "name",
@@ -1647,7 +1647,7 @@ func init() {
 					{
 						"autogeneratePattern": "",
 						"hidden": false,
-						"id": "_clone_W5ly",
+						"id": "_clone_vRtY",
 						"max": 0,
 						"min": 0,
 						"name": "iso2",
@@ -1662,7 +1662,7 @@ func init() {
 						"cascadeDelete": false,
 						"collectionId": "_pb_users_auth_",
 						"hidden": false,
-						"id": "_clone_AIWy",
+						"id": "_clone_FswK",
 						"maxSelect": 1,
 						"minSelect": 0,
 						"name": "user",
@@ -1679,7 +1679,7 @@ func init() {
 				"system": false,
 				"type": "view",
 				"updateRule": null,
-				"viewQuery": "select distinct\n  (ROW_NUMBER() OVER()) as id,\n  country.name,\n  country.iso2,\n  visited_city.user\nfrom\n  visited_city\n  left join city on visited_city.city = city.id\n  left join country on city.country = country.id;",
+				"viewQuery": "select distinct\n  (country.iso2 || \"-\" || visited_city.user) as id,\n  country.name,\n  country.iso2,\n  visited_city.user\nfrom\n  visited_city\n  left join city on visited_city.city = city.id\n  left join country on city.country = country.id;",
 				"viewRule": ""
 			},
 			{

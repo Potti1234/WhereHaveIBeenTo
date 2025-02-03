@@ -12,7 +12,8 @@
     "build:client": "npm run lint && vite build",
     "build:server": "cd ../backend && go build -tags production -o ../citiesbeen",
     "build": "npm run build:client && npm run build:server",
-    "preview": "../backend/citiesbeen serve"
+    "preview": "../backend/citiesbeen serve",
+    "migrate": "cd ../backend && go run . migrate collections"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
