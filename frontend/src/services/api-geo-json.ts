@@ -4,18 +4,26 @@ import { geoJsonSchema } from '@/schemas/geo-json-schema'
 import { PbId } from '@/schemas/pb-schema'
 
 export async function getOutlineGeoJson(countryId: PbId) {
+  if (!countryId) {
+    return null
+  }
   const geoJson = await pb.collection('geo_json').getFirstListItem(
     `type = "Outline" && country = "${countryId}"`
   )
   return geoJsonSchema.parse(geoJson)
 }
 
+
 export async function getWithStatesGeoJson(countryId: PbId) {
+  if (!countryId) {
+    return null
+  }
   const geoJson = await pb.collection('geo_json').getFirstListItem(
     `type = "WithStates" && country = "${countryId}"`
   )
   return geoJsonSchema.parse(geoJson)
 }
+
 
 export async function getWorldGeoJson() {
   const geoJson = await pb.collection('geo_json').getFirstListItem(
