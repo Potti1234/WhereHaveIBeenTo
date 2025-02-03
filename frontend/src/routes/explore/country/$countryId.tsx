@@ -9,7 +9,7 @@ import Spinner from '@/components/shared/spinner'
 export const Route = createFileRoute('/explore/country/$countryId')({
   component: CountryPage,
   pendingComponent: Spinner,
-  beforeLoad: async () => {
+  beforeLoad: () => {
     return { getTitle: () => 'Explore Country' }
   }
 })

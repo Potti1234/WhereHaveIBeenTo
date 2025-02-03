@@ -4,9 +4,13 @@ import { countryListSchema, countrySchema } from '@/schemas/country-schema'
 import { PbId } from '@/schemas/pb-schema'
 
 export async function getCountry(countryId: PbId) {
+  if (!countryId) {
+    return null
+  }
   const country = await pb.collection('country').getOne(countryId)
   return countrySchema.parse(country)
 }
+
 
 export async function getCountries() {
   const countries = await pb.collection('country').getFullList()

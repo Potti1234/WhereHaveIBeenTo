@@ -6,11 +6,10 @@ import {
 } from '@/services/api-country'
 import { errorToast } from '@/lib/toast'
 
-export function useCountry(countryId?: string) {
+export function useCountry(countryId: string) {
   const { data: countries } = useSuspenseQuery(countriesQueryOptions)
 
-  const countryQuery = useSuspenseQuery(countryQueryOptions(countryId ?? ''))
-  const { data: country } = countryId ? countryQuery : { data: undefined }
+  const { data: country } = useSuspenseQuery(countryQueryOptions(countryId))
 
   const getRandomCountryList = async (amount: number) => {
     try {
