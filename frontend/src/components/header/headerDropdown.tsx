@@ -14,15 +14,15 @@ import { Link } from '@tanstack/react-router'
 import useAuth from '@/hooks/use-auth'
 
 export default function HeaderDropdown () {
-  const { user, logout } = useAuth()
+  const { avatarUrl, logout } = useAuth()
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant='secondary' size='icon' className='rounded-full'>
-          {user?.avatar ? (
+          {avatarUrl ? (
             <img
-              src={user.avatar}
+              src={avatarUrl}
               className='h-5 w-5 rounded-full'
               alt='Profile'
             />

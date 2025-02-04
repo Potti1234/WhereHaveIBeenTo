@@ -365,23 +365,24 @@ def insert_geojson_data(type: str):
         #Get country id from pocketbase
         country_id = requests.get(f"{BASE_URL}/api/collections/country/records?filter=iso2='{country_iso2}'", headers=headers)
         country_id = country_id.json()["items"][0]["id"]
-        #Insert the geojson file into the country
-        with open(file, 'r') as f:
-            geojson_data = json.load(f)
-            data = {
-                'country': country_id,
-                'json': geojson_data,
-                'type': type
-            }
+        # Create multipart form data with file and metadata
+        files = {
+            'json': (file, open(file, 'rb'), 'application/json')
+        }
+        data = {
+            'country': country_id,
+            'type': type
+        }
             
-            # Create new record
-            response = requests.post(
-                f"{BASE_URL}/api/collections/geo_json/records",
-                headers=headers,
-                json=data
-            )
-            response.raise_for_status()
-            print(f"Created: {country_iso2}")
+        # Create new record using multipart/form-data
+        response = requests.post(
+            f"{BASE_URL}/api/collections/geo_json/records",
+            headers=headers,
+            data=data,
+            files=files
+        )
+        response.raise_for_status()
+        print(f"Created: {country_iso2}")
 
 def main():
     #create_region_subregion_csv()

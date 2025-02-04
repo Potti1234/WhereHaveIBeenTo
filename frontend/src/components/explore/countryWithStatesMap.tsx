@@ -39,7 +39,7 @@ export default function CountryWithStatesMap (props: {
         style={{ height: '50svh', width: '100%' }}
       >
         {withStatesGeoJson && (
-          <GeoJSON data={withStatesGeoJson.json} onEachFeature={onEachState} />
+          <GeoJSON data={withStatesGeoJson} onEachFeature={onEachState} />
         )}
 
         <TileLayer

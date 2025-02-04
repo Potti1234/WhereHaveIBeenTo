@@ -10,7 +10,13 @@ export async function getOutlineGeoJson(countryId: PbId) {
   const geoJson = await pb.collection('geo_json').getFirstListItem(
     `type = "Outline" && country = "${countryId}"`
   )
-  return geoJsonSchema.parse(geoJson)
+  if (!geoJson.json) {
+    return null
+  }
+  const res = pb.files.getURL(geoJson, geoJson.json)
+  const response = await fetch(res)
+  const json = await response.json()
+  return json
 }
 
 
@@ -21,7 +27,13 @@ export async function getWithStatesGeoJson(countryId: PbId) {
   const geoJson = await pb.collection('geo_json').getFirstListItem(
     `type = "WithStates" && country = "${countryId}"`
   )
-  return geoJsonSchema.parse(geoJson)
+  if (!geoJson.json) {
+    return null
+  }
+  const res = pb.files.getURL(geoJson, geoJson.json)
+  const response = await fetch(res)
+  const json = await response.json()
+  return json
 }
 
 
@@ -29,8 +41,16 @@ export async function getWorldGeoJson() {
   const geoJson = await pb.collection('geo_json').getFirstListItem(
     'type = "World"'
   )
-  return geoJsonSchema.parse(geoJson)
+  if (!geoJson.json) {
+    return null
+  }
+  const res = pb.files.getURL(geoJson, geoJson.json)
+  const response = await fetch(res)
+  const json = await response.json()
+  return json
 }
+
+
 
 export const outlineGeoJsonQueryOptions = (countryId: string) =>
   queryOptions({

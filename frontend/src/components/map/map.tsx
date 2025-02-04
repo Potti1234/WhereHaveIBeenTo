@@ -23,7 +23,7 @@ export default function WorldMap ({ userId }: WorldMapProps) {
   // Use existing hooks
   const { visitedCities, removeVisitedCity } = useVisitedCity(userId ?? '')
   const { worldGeoJson } = useGeoJson()
-  const { countries } = useCountry()
+  const { countries } = useCountry('')
 
   // Calculate visited countries from visited cities
   const visitedCountries = React.useMemo(() => {
@@ -142,7 +142,7 @@ export default function WorldMap ({ userId }: WorldMapProps) {
           })}
 
         {worldGeoJson && scope === 'countries' && (
-          <GeoJSON data={worldGeoJson.json} onEachFeature={onEachCountry} />
+          <GeoJSON data={worldGeoJson} onEachFeature={onEachCountry} />
         )}
         <MapScopeSelector scopeCallback={setScope} />
 

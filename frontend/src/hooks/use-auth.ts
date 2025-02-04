@@ -6,6 +6,7 @@ import {
   authRefresh,
   confirmPasswordReset as confirmPasswordResetApi,
   createNewUser,
+  getAvatarUrl,
   loginWithGoogle as loginWithGoogleApi,
   loginWithPassword as loginWithPasswordApi,
   logout as logoutApi,
@@ -27,6 +28,7 @@ export default function useAuth() {
   const { trackEvent } = usePlausible()
 
   const { data: user } = useSuspenseQuery(userQueryOptions)
+  const avatarUrl = getAvatarUrl()
 
   const logout = () => {
     logoutApi()
@@ -167,6 +169,7 @@ export default function useAuth() {
 
   return {
     user,
+    avatarUrl,
     logout,
     loginWithPassword,
     loginWithGoogle,

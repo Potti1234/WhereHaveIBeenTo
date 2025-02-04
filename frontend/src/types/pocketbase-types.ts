@@ -17,6 +17,7 @@ export enum Collections {
 	DistinctVisitedStates = "distinct_visited_states",
 	GeoJson = "geo_json",
 	Region = "region",
+	Settings = "settings",
 	State = "state",
 	Subregion = "subregion",
 	Users = "users",
@@ -151,11 +152,11 @@ export enum GeoJsonTypeOptions {
 	"WithStates" = "WithStates",
 	"World" = "World",
 }
-export type GeoJsonRecord<Tjson = unknown> = {
+export type GeoJsonRecord = {
 	country?: RecordIdString
 	created?: IsoDateString
 	id: string
-	json?: null | Tjson
+	json?: string
 	type?: GeoJsonTypeOptions
 	updated?: IsoDateString
 }
@@ -165,6 +166,14 @@ export type RegionRecord = {
 	id: string
 	name?: string
 	updated?: IsoDateString
+}
+
+export type SettingsRecord = {
+	authWithPasswordAvailable?: boolean
+	created?: IsoDateString
+	id: string
+	updated?: IsoDateString
+	user?: RecordIdString
 }
 
 export type StateRecord = {
@@ -216,8 +225,9 @@ export type CityResponse<Texpand = unknown> = Required<CityRecord> & BaseSystemF
 export type CountryResponse<Texpand = unknown> = Required<CountryRecord> & BaseSystemFields<Texpand>
 export type DistinctVisitedCountriesResponse<Texpand = unknown> = Required<DistinctVisitedCountriesRecord> & BaseSystemFields<Texpand>
 export type DistinctVisitedStatesResponse<Texpand = unknown> = Required<DistinctVisitedStatesRecord> & BaseSystemFields<Texpand>
-export type GeoJsonResponse<Tjson = unknown, Texpand = unknown> = Required<GeoJsonRecord<Tjson>> & BaseSystemFields<Texpand>
+export type GeoJsonResponse<Texpand = unknown> = Required<GeoJsonRecord> & BaseSystemFields<Texpand>
 export type RegionResponse<Texpand = unknown> = Required<RegionRecord> & BaseSystemFields<Texpand>
+export type SettingsResponse<Texpand = unknown> = Required<SettingsRecord> & BaseSystemFields<Texpand>
 export type StateResponse<Texpand = unknown> = Required<StateRecord> & BaseSystemFields<Texpand>
 export type SubregionResponse<Texpand = unknown> = Required<SubregionRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
@@ -237,6 +247,7 @@ export type CollectionRecords = {
 	distinct_visited_states: DistinctVisitedStatesRecord
 	geo_json: GeoJsonRecord
 	region: RegionRecord
+	settings: SettingsRecord
 	state: StateRecord
 	subregion: SubregionRecord
 	users: UsersRecord
@@ -255,6 +266,7 @@ export type CollectionResponses = {
 	distinct_visited_states: DistinctVisitedStatesResponse
 	geo_json: GeoJsonResponse
 	region: RegionResponse
+	settings: SettingsResponse
 	state: StateResponse
 	subregion: SubregionResponse
 	users: UsersResponse
@@ -276,6 +288,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'distinct_visited_states'): RecordService<DistinctVisitedStatesResponse>
 	collection(idOrName: 'geo_json'): RecordService<GeoJsonResponse>
 	collection(idOrName: 'region'): RecordService<RegionResponse>
+	collection(idOrName: 'settings'): RecordService<SettingsResponse>
 	collection(idOrName: 'state'): RecordService<StateResponse>
 	collection(idOrName: 'subregion'): RecordService<SubregionResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>

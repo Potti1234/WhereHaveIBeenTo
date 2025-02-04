@@ -15,6 +15,11 @@ export function checkVerifiedUserIsLoggedIn() {
   return checkUserIsLoggedIn() && checkEmailIsVerified()
 }
 
+export function getAvatarUrl() {
+  if (!pb.authStore.record) return null
+  return pb.files.getURL(pb.authStore.record, pb.authStore.record?.avatar)
+}
+
 export async function authRefresh() {
   if (!checkUserIsLoggedIn()) return
   await pb.collection('users').authRefresh({ requestKey: null })
@@ -114,8 +119,6 @@ export const userQueryOptions = queryOptions({
     const settings = await pb
       .collection('settings')
       .getFirstListItem(`user="${pb.authStore.model?.id}"`)
-
-    setTheme(settings.theme)
 
     const userData = userWithSettingsSchema.parse({
       ...pb.authStore.model,
