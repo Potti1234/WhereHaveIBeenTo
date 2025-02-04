@@ -1,4 +1,3 @@
-import { setTheme } from '@/lib/set-theme'
 import { User, userSchema, userWithSettingsSchema } from '@/schemas/user-schema'
 import { queryOptions } from '@tanstack/react-query'
 import { pb } from './pocketbase'
