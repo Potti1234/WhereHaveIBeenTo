@@ -13,6 +13,7 @@ export enum Collections {
 	Superusers = "_superusers",
 	City = "city",
 	Country = "country",
+	Currency = "currency",
 	DistinctVisitedCountries = "distinct_visited_countries",
 	DistinctVisitedStates = "distinct_visited_states",
 	GeoJson = "geo_json",
@@ -133,6 +134,15 @@ export type CountryRecord = {
 	updated?: IsoDateString
 }
 
+export type CurrencyRecord = {
+	code?: string
+	created?: IsoDateString
+	id: string
+	name?: string
+	rate?: number
+	updated?: IsoDateString
+}
+
 export type DistinctVisitedCountriesRecord = {
 	id: string
 	iso2?: string
@@ -223,6 +233,7 @@ export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemF
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
 export type CityResponse<Texpand = unknown> = Required<CityRecord> & BaseSystemFields<Texpand>
 export type CountryResponse<Texpand = unknown> = Required<CountryRecord> & BaseSystemFields<Texpand>
+export type CurrencyResponse<Texpand = unknown> = Required<CurrencyRecord> & BaseSystemFields<Texpand>
 export type DistinctVisitedCountriesResponse<Texpand = unknown> = Required<DistinctVisitedCountriesRecord> & BaseSystemFields<Texpand>
 export type DistinctVisitedStatesResponse<Texpand = unknown> = Required<DistinctVisitedStatesRecord> & BaseSystemFields<Texpand>
 export type GeoJsonResponse<Texpand = unknown> = Required<GeoJsonRecord> & BaseSystemFields<Texpand>
@@ -243,6 +254,7 @@ export type CollectionRecords = {
 	_superusers: SuperusersRecord
 	city: CityRecord
 	country: CountryRecord
+	currency: CurrencyRecord
 	distinct_visited_countries: DistinctVisitedCountriesRecord
 	distinct_visited_states: DistinctVisitedStatesRecord
 	geo_json: GeoJsonRecord
@@ -262,6 +274,7 @@ export type CollectionResponses = {
 	_superusers: SuperusersResponse
 	city: CityResponse
 	country: CountryResponse
+	currency: CurrencyResponse
 	distinct_visited_countries: DistinctVisitedCountriesResponse
 	distinct_visited_states: DistinctVisitedStatesResponse
 	geo_json: GeoJsonResponse
@@ -284,6 +297,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
 	collection(idOrName: 'city'): RecordService<CityResponse>
 	collection(idOrName: 'country'): RecordService<CountryResponse>
+	collection(idOrName: 'currency'): RecordService<CurrencyResponse>
 	collection(idOrName: 'distinct_visited_countries'): RecordService<DistinctVisitedCountriesResponse>
 	collection(idOrName: 'distinct_visited_states'): RecordService<DistinctVisitedStatesResponse>
 	collection(idOrName: 'geo_json'): RecordService<GeoJsonResponse>

@@ -19,7 +19,6 @@ var embeddedFiles embed.FS
 // front-end assets when building for production.
 func (app *application) mountFs() {
 	app.pb.OnServe().BindFunc(func(e *core.ServeEvent) error {
-		log.Println("Mounting production files", embeddedFiles)
 		fs, err := fs.Sub(embeddedFiles, "dist")
 		if err != nil {
 			log.Println("Error mounting production files", err)

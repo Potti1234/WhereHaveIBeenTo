@@ -1,7 +1,8 @@
 import { queryOptions } from '@tanstack/react-query'
-import { pb } from "./pocketbase"
+import pb from "./pocketbase"
 import { cityListSchema, citySchema, cityWithCountrySchema, cityWithCountryAndStateListSchema } from '@/schemas/city-schema'
 import { PbId } from '@/schemas/pb-schema'
+
 
 export async function getCity(cityId: PbId) {
     if (!cityId) {

@@ -1,6 +1,6 @@
 import { UpdateUserSettingsFields } from '@/schemas/user-schema'
 import { loginWithPassword } from './api-auth'
-import { pb } from './pocketbase'
+import pb from './pocketbase'
 
 export async function getSettings(userId?: string) {
   userId ??= pb.authStore.model?.id

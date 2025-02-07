@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import { pb } from './pocketbase'
+import pb from './pocketbase'
 import { PbId } from '@/schemas/pb-schema'
 
 export async function getOutlineGeoJson(countryId: PbId) {

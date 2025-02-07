@@ -38,6 +38,8 @@ func main() {
 	app.setupAuthHooks()
 	app.disableHealthRouteLogging()
 
+	app.InitCurrencyUpdater()
+
 	if err := app.pb.Start(); err != nil {
 		log.Fatal(err)
 	}

@@ -1,6 +1,6 @@
 import { User, userSchema, userWithSettingsSchema } from '@/schemas/user-schema'
 import { queryOptions } from '@tanstack/react-query'
-import { pb } from './pocketbase'
+import pb from './pocketbase'
 
 export function checkUserIsLoggedIn() {
   return pb.authStore.isValid

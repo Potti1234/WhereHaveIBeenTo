@@ -1547,146 +1547,6 @@ func init() {
 				"deleteRule": null,
 				"fields": [
 					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "text3208210256",
-						"max": 0,
-						"min": 0,
-						"name": "id",
-						"pattern": "^[a-z0-9]+$",
-						"presentable": false,
-						"primaryKey": true,
-						"required": true,
-						"system": true,
-						"type": "text"
-					},
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "_clone_Zypd",
-						"max": 0,
-						"min": 0,
-						"name": "name",
-						"pattern": "",
-						"presentable": false,
-						"primaryKey": false,
-						"required": false,
-						"system": false,
-						"type": "text"
-					},
-					{
-						"cascadeDelete": false,
-						"collectionId": "_pb_users_auth_",
-						"hidden": false,
-						"id": "_clone_09Ci",
-						"maxSelect": 1,
-						"minSelect": 0,
-						"name": "user",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "relation"
-					},
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "_clone_6y5A",
-						"max": 0,
-						"min": 0,
-						"name": "country_name",
-						"pattern": "",
-						"presentable": false,
-						"primaryKey": false,
-						"required": false,
-						"system": false,
-						"type": "text"
-					}
-				],
-				"id": "pbc_1420006221",
-				"indexes": [],
-				"listRule": "",
-				"name": "distinct_visited_states",
-				"system": false,
-				"type": "view",
-				"updateRule": null,
-				"viewQuery": "select distinct\n  (state.name || \"-\" || visited_city.user) as id,\n  state.name,\n  visited_city.user,\n  country.name as country_name\nfrom\n  visited_city\nleft join city on visited_city.city = city.id\nleft join state on city.state = state.id\nleft join country on city.country = country.id;",
-				"viewRule": ""
-			},
-			{
-				"createRule": null,
-				"deleteRule": null,
-				"fields": [
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "text3208210256",
-						"max": 0,
-						"min": 0,
-						"name": "id",
-						"pattern": "^[a-z0-9]+$",
-						"presentable": false,
-						"primaryKey": true,
-						"required": true,
-						"system": true,
-						"type": "text"
-					},
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "_clone_CMLt",
-						"max": 0,
-						"min": 0,
-						"name": "name",
-						"pattern": "",
-						"presentable": false,
-						"primaryKey": false,
-						"required": false,
-						"system": false,
-						"type": "text"
-					},
-					{
-						"autogeneratePattern": "",
-						"hidden": false,
-						"id": "_clone_vRtY",
-						"max": 0,
-						"min": 0,
-						"name": "iso2",
-						"pattern": "",
-						"presentable": false,
-						"primaryKey": false,
-						"required": false,
-						"system": false,
-						"type": "text"
-					},
-					{
-						"cascadeDelete": false,
-						"collectionId": "_pb_users_auth_",
-						"hidden": false,
-						"id": "_clone_FswK",
-						"maxSelect": 1,
-						"minSelect": 0,
-						"name": "user",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "relation"
-					}
-				],
-				"id": "pbc_1572965614",
-				"indexes": [],
-				"listRule": "",
-				"name": "distinct_visited_countries",
-				"system": false,
-				"type": "view",
-				"updateRule": null,
-				"viewQuery": "select distinct\n  (country.iso2 || \"-\" || visited_city.user) as id,\n  country.name,\n  country.iso2,\n  visited_city.user\nfrom\n  visited_city\n  left join city on visited_city.city = city.id\n  left join country on city.country = country.id;",
-				"viewRule": ""
-			},
-			{
-				"createRule": null,
-				"deleteRule": null,
-				"fields": [
-					{
 						"autogeneratePattern": "[a-z0-9]{15}",
 						"hidden": false,
 						"id": "text3208210256",
@@ -1699,16 +1559,6 @@ func init() {
 						"required": true,
 						"system": true,
 						"type": "text"
-					},
-					{
-						"hidden": false,
-						"id": "json1199526629",
-						"maxSize": 32000000,
-						"name": "json",
-						"presentable": false,
-						"required": false,
-						"system": false,
-						"type": "json"
 					},
 					{
 						"cascadeDelete": false,
@@ -1737,6 +1587,22 @@ func init() {
 							"WithStates",
 							"World"
 						]
+					},
+					{
+						"hidden": false,
+						"id": "file1795630405",
+						"maxSelect": 1,
+						"maxSize": 320000000,
+						"mimeTypes": [
+							"application/geo+json"
+						],
+						"name": "json",
+						"presentable": false,
+						"protected": false,
+						"required": false,
+						"system": false,
+						"thumbs": [],
+						"type": "file"
 					},
 					{
 						"hidden": false,
@@ -1837,6 +1703,234 @@ func init() {
 				"type": "base",
 				"updateRule": "@request.auth.id = user.id",
 				"viewRule": "@request.auth.id = user.id"
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "_clone_UGUF",
+						"max": 0,
+						"min": 0,
+						"name": "name",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"cascadeDelete": false,
+						"collectionId": "_pb_users_auth_",
+						"hidden": false,
+						"id": "_clone_3r3n",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "user",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "relation"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "_clone_GhBd",
+						"max": 0,
+						"min": 0,
+						"name": "country_name",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					}
+				],
+				"id": "pbc_1420006221",
+				"indexes": [],
+				"listRule": "",
+				"name": "distinct_visited_states",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "select distinct\n  (state.name || \"-\" || visited_city.user) as id,\n  state.name,\n  visited_city.user,\n  country.name as country_name\nfrom\n  visited_city\nleft join city on visited_city.city = city.id\nleft join state on city.state = state.id\nleft join country on city.country = country.id;",
+				"viewRule": ""
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 0,
+						"min": 0,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "_clone_JoBT",
+						"max": 0,
+						"min": 0,
+						"name": "name",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "_clone_w52n",
+						"max": 0,
+						"min": 0,
+						"name": "iso2",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"cascadeDelete": false,
+						"collectionId": "_pb_users_auth_",
+						"hidden": false,
+						"id": "_clone_WlHX",
+						"maxSelect": 1,
+						"minSelect": 0,
+						"name": "user",
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "relation"
+					}
+				],
+				"id": "pbc_1572965614",
+				"indexes": [],
+				"listRule": "",
+				"name": "distinct_visited_countries",
+				"system": false,
+				"type": "view",
+				"updateRule": null,
+				"viewQuery": "select distinct\n  (country.iso2 || \"-\" || visited_city.user) as id,\n  country.name,\n  country.iso2,\n  visited_city.user\nfrom\n  visited_city\n  left join city on visited_city.city = city.id\n  left join country on city.country = country.id;",
+				"viewRule": ""
+			},
+			{
+				"createRule": null,
+				"deleteRule": null,
+				"fields": [
+					{
+						"autogeneratePattern": "[a-z0-9]{15}",
+						"hidden": false,
+						"id": "text3208210256",
+						"max": 15,
+						"min": 15,
+						"name": "id",
+						"pattern": "^[a-z0-9]+$",
+						"presentable": false,
+						"primaryKey": true,
+						"required": true,
+						"system": true,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text1579384326",
+						"max": 0,
+						"min": 0,
+						"name": "name",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"autogeneratePattern": "",
+						"hidden": false,
+						"id": "text1997877400",
+						"max": 0,
+						"min": 0,
+						"name": "code",
+						"pattern": "",
+						"presentable": false,
+						"primaryKey": false,
+						"required": false,
+						"system": false,
+						"type": "text"
+					},
+					{
+						"hidden": false,
+						"id": "number3402113753",
+						"max": null,
+						"min": null,
+						"name": "rate",
+						"onlyInt": false,
+						"presentable": false,
+						"required": false,
+						"system": false,
+						"type": "number"
+					},
+					{
+						"hidden": false,
+						"id": "autodate2990389176",
+						"name": "created",
+						"onCreate": true,
+						"onUpdate": false,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					},
+					{
+						"hidden": false,
+						"id": "autodate3332085495",
+						"name": "updated",
+						"onCreate": true,
+						"onUpdate": true,
+						"presentable": false,
+						"system": false,
+						"type": "autodate"
+					}
+				],
+				"id": "pbc_689492006",
+				"indexes": [],
+				"listRule": null,
+				"name": "currency",
+				"system": false,
+				"type": "base",
+				"updateRule": null,
+				"viewRule": null
 			}
 		]`
 

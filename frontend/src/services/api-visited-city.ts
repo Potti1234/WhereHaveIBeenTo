@@ -1,9 +1,10 @@
 import { queryOptions } from '@tanstack/react-query'
-import { pb } from './pocketbase'
+import pb from './pocketbase'
 import { 
   visitedCitySchema,
   visitedCityWithExpandListSchema 
 } from '@/schemas/visited-city-schema'
+
 import { PbId } from '@/schemas/pb-schema'
 
 export async function getVisitedCitiesCount(userId: PbId) {

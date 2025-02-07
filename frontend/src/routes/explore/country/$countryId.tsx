@@ -5,6 +5,7 @@ import { useCountry } from '@/hooks/use-country'
 import { useParams } from '@tanstack/react-router'
 import { createFileRoute } from '@tanstack/react-router'
 import Spinner from '@/components/shared/spinner'
+import { CurrencyConverter } from '@/components/shared/currency/currency-converter'
 
 export const Route = createFileRoute('/explore/country/$countryId')({
   component: CountryPage,
@@ -58,6 +59,7 @@ function CountryPage () {
             </Card>
           </div>
           {country && <CountryWithStatesMap country={country} />}
+          <CurrencyConverter defaultToCurrency={country?.currency} />
         </div>
       </main>
     </ScrollArea>

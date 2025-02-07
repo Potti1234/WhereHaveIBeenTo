@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query'
-import { pb } from './pocketbase'
+import pb from './pocketbase'
 import { 
   distinctVisitedCountryListSchema 
 } from '@/schemas/distinct-visited-countries-schema'
