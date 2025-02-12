@@ -35,6 +35,12 @@ export default function Header () {
           >
             Explore
           </Link>
+          <Link
+            to='/trip'
+            className='text-muted-foreground transition-colors hover:text-foreground'
+          >
+            Trip
+          </Link>
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -72,6 +78,12 @@ export default function Header () {
                 className='text-muted-foreground hover:text-foreground'
               >
                 Explore
+              </Link>
+              <Link
+                to='/trip'
+                className='text-muted-foreground hover:text-foreground'
+              >
+                Trip
               </Link>
             </nav>
           </SheetContent>

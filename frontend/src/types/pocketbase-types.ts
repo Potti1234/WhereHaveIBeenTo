@@ -21,6 +21,8 @@ export enum Collections {
 	Settings = "settings",
 	State = "state",
 	Subregion = "subregion",
+	TravelItem = "travel_item",
+	Trip = "trip",
 	Users = "users",
 	VisitedCity = "visited_city",
 }
@@ -204,6 +206,36 @@ export type SubregionRecord = {
 	updated?: IsoDateString
 }
 
+export enum TravelItemTypeOptions {
+	"plane" = "plane",
+	"bus" = "bus",
+	"car" = "car",
+	"train" = "train",
+}
+export type TravelItemRecord = {
+	arrival_date?: IsoDateString
+	created?: IsoDateString
+	from?: RecordIdString
+	id: string
+	order?: number
+	start_date?: IsoDateString
+	to?: RecordIdString
+	trip?: RecordIdString
+	type?: TravelItemTypeOptions
+	updated?: IsoDateString
+	user?: RecordIdString
+}
+
+export type TripRecord = {
+	created?: IsoDateString
+	description?: string
+	id: string
+	name?: string
+	travel_items?: RecordIdString[]
+	updated?: IsoDateString
+	user?: RecordIdString
+}
+
 export type UsersRecord = {
 	avatar?: string
 	created?: IsoDateString
@@ -241,6 +273,8 @@ export type RegionResponse<Texpand = unknown> = Required<RegionRecord> & BaseSys
 export type SettingsResponse<Texpand = unknown> = Required<SettingsRecord> & BaseSystemFields<Texpand>
 export type StateResponse<Texpand = unknown> = Required<StateRecord> & BaseSystemFields<Texpand>
 export type SubregionResponse<Texpand = unknown> = Required<SubregionRecord> & BaseSystemFields<Texpand>
+export type TravelItemResponse<Texpand = unknown> = Required<TravelItemRecord> & BaseSystemFields<Texpand>
+export type TripResponse<Texpand = unknown> = Required<TripRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type VisitedCityResponse<Texpand = unknown> = Required<VisitedCityRecord> & BaseSystemFields<Texpand>
 
@@ -262,6 +296,8 @@ export type CollectionRecords = {
 	settings: SettingsRecord
 	state: StateRecord
 	subregion: SubregionRecord
+	travel_item: TravelItemRecord
+	trip: TripRecord
 	users: UsersRecord
 	visited_city: VisitedCityRecord
 }
@@ -282,6 +318,8 @@ export type CollectionResponses = {
 	settings: SettingsResponse
 	state: StateResponse
 	subregion: SubregionResponse
+	travel_item: TravelItemResponse
+	trip: TripResponse
 	users: UsersResponse
 	visited_city: VisitedCityResponse
 }
@@ -305,6 +343,8 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'settings'): RecordService<SettingsResponse>
 	collection(idOrName: 'state'): RecordService<StateResponse>
 	collection(idOrName: 'subregion'): RecordService<SubregionResponse>
+	collection(idOrName: 'travel_item'): RecordService<TravelItemResponse>
+	collection(idOrName: 'trip'): RecordService<TripResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 	collection(idOrName: 'visited_city'): RecordService<VisitedCityResponse>
 }

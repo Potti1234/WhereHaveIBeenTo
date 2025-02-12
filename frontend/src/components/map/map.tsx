@@ -6,11 +6,11 @@ import 'leaflet/dist/leaflet.css'
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { useNavigate } from '@tanstack/react-router'
 import { MapScopeSelector } from '@/components/map/MapScopeSelector'
 import { useVisitedCity } from '@/hooks/use-visited-city'
 import { useGeoJson } from '@/hooks/use-geo-json'
 import { useCountry } from '@/hooks/use-country'
+import { useNavigate } from '@tanstack/react-router'
 
 interface WorldMapProps {
   userId: string | null
@@ -81,7 +81,7 @@ export default function WorldMap ({ userId }: WorldMapProps) {
   }
 
   return (
-    <div>
+    <div className='relative'>
       <MapContainer
         center={[30, 0]}
         zoomControl={false}

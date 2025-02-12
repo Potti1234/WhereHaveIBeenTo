@@ -3,7 +3,8 @@ import {
   cityQueryOptions, 
   cityWithCountryQueryOptions,
   getCitiesThatStartWith,
-  getRandomCities
+  getRandomCities,
+  searchCityByIdQueryOptions
 } from '@/services/api-city'
 import { errorToast } from '@/lib/toast'
 
@@ -12,6 +13,10 @@ export function useCity(cityId: string) {
   
   const { data: cityWithCountry } = useSuspenseQuery(
     cityWithCountryQueryOptions(cityId)
+  )
+
+  const { data: searchCityById } = useSuspenseQuery(
+    searchCityByIdQueryOptions(cityId)
   )
 
   const searchCities = async (searchTerm: string) => {
@@ -34,9 +39,12 @@ export function useCity(cityId: string) {
     }
   }
 
+
+
   return {
     city,
     cityWithCountry,
+    searchCityById,
     searchCities,
     getRandomCityList
   }
