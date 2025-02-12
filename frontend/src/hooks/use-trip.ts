@@ -14,9 +14,7 @@ export function useTrip(tripId?: string) {
 
   const { data: trips } = useSuspenseQuery(tripsQueryOptions)
 
-  const { data: trip } = tripId
-    ? useSuspenseQuery(tripQueryOptions(tripId))
-    : { data: null }
+  const { data: trip } = useSuspenseQuery(tripQueryOptions(tripId ?? ''))
 
   const createTripMutation = useMutation({
     mutationFn: ({
