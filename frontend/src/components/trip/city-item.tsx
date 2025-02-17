@@ -18,7 +18,6 @@ export function CityItem ({ item, onCityChange, isFirst }: CityItemProps) {
           <Label htmlFor={`city-name-${item.id}`}>City</Label>
           <CityInput
             onSelect={city => {
-              console.log(typeof onCityChange)
               if (city.id) {
                 onCityChange(city.id)
               }

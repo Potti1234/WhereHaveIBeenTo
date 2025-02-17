@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { pbIdSchema } from './pb-schema'
+import { citySchema } from './city-schema'
 
 export const travelItemSchema = z.object({
   id: pbIdSchema.optional(),
@@ -37,6 +38,25 @@ export const tripSchemaTravelItemExpandedSchema = tripSchema.extend({
 })
 
 export const tripSchemaTravelItemExpandedListSchema = z.array(tripSchemaTravelItemExpandedSchema)
+
+export const travelItemSchemaExpandCityFromToSchema = travelItemSchema.extend({
+  expand: z.object({
+    from: citySchema,
+    to: citySchema
+  })
+})
+
+export const tripSchemaTravelItemAndCityFromToExpandedSchema = tripSchema.extend({
+  expand: z.object({
+    travel_items: z.array(travelItemSchemaExpandCityFromToSchema)
+  })
+})
+
+export const tripSchemaTravelItemAndCityFromToExpandedListSchema = z.array(tripSchemaTravelItemAndCityFromToExpandedSchema)
+
+export type ExpandedTripType = z.infer<
+  typeof tripSchemaTravelItemAndCityFromToExpandedSchema
+>
 
 export interface CityItemType {
   id: string

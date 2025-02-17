@@ -7,7 +7,7 @@ import {
   deleteTrip as deleteTripApi
 } from '@/services/api-trip'
 import { errorToast, successToast } from '@/lib/toast'
-import type { TripType, TravelItemType } from '@/schemas/trip-schema'
+import type { TravelItemType, ExpandedTripType } from '@/schemas/trip-schema'
 
 export function useTrip(tripId?: string) {
   const queryClient = useQueryClient()
@@ -21,7 +21,7 @@ export function useTrip(tripId?: string) {
       trip,
       travelItems
     }: {
-      trip: TripType
+      trip: ExpandedTripType
       travelItems: TravelItemType[]
     }) => createTripApi(trip, travelItems),
     onSuccess: () => {
@@ -41,7 +41,7 @@ export function useTrip(tripId?: string) {
       travelItems
     }: {
       id: string
-      trip: TripType
+      trip: ExpandedTripType
       travelItems: TravelItemType[]
     }) => updateTripApi(id, trip, travelItems),
     onSuccess: () => {
@@ -67,8 +67,8 @@ export function useTrip(tripId?: string) {
   })
 
   return {
-    trip,
-    trips,
+    trip: trip as ExpandedTripType | null,
+    trips: trips as ExpandedTripType[],
     createTrip: createTripMutation.mutate,
     updateTrip: updateTripMutation.mutate,
     deleteTrip: deleteTripMutation.mutate,

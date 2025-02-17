@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { TripList } from '@/components/trip/trip-list'
-import type { TripType, TravelItemType } from '@/schemas/trip-schema'
+import type { TravelItemType, ExpandedTripType } from '@/schemas/trip-schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -9,17 +9,21 @@ import { Card, CardContent } from '@/components/ui/card'
 import { useTrip } from '@/hooks/use-trip'
 import useAuth from '@/hooks/use-auth'
 import { useEffect } from 'react'
+import TripMap from './trip-map'
 
 export default function TripPlanner (props: {
-  trip: TripType
+  trip: ExpandedTripType
   travelItems: TravelItemType[]
   edit: boolean
 }) {
   const { user } = useAuth()
-  const [trip, setTrip] = useState<TripType>({
+  const [trip, setTrip] = useState<ExpandedTripType>({
     name: '',
     description: '',
-    user: user?.id
+    user: user?.id,
+    expand: {
+      travel_items: []
+    }
   })
   const [travelItems, setTravelItems] = useState<TravelItemType[]>([])
 
@@ -48,7 +52,7 @@ export default function TripPlanner (props: {
       start_date: null,
       arrival_date: null,
       order: index,
-      from: '',
+      from: travelItems[index - 1]?.to || '',
       to: ''
     }
 
@@ -175,6 +179,8 @@ export default function TripPlanner (props: {
           </div>
         </CardContent>
       </Card>
+
+      <TripMap trip={trip} />
 
       <TripList
         travelItems={travelItems}

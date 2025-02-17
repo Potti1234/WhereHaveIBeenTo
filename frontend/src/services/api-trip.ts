@@ -1,25 +1,53 @@
 import { queryOptions } from '@tanstack/react-query'
 import pb from './pocketbase'
-import { tripSchema, type TripType, type TravelItemType, tripSchemaTravelItemExpandedSchema, tripSchemaTravelItemExpandedListSchema } from '@/schemas/trip-schema'
+import { tripSchema, type TripType, type TravelItemType, tripSchemaTravelItemAndCityFromToExpandedSchema, tripSchemaTravelItemAndCityFromToExpandedListSchema} from '@/schemas/trip-schema'
 import { PbId } from '@/schemas/pb-schema'
+
+interface ExpandObject {
+  expand?: {
+    travel_items?: Array<TravelItemType & { 
+      expand?: { 
+        from?: any
+        to?: any 
+      } 
+    }>
+  }
+}
 
 export async function getTrip(tripId: PbId) {
   if (!tripId) {
     return null
   }
   const trip = await pb.collection('trip').getOne(tripId, {
-    expand: 'travel_items'
-  })
-  return tripSchemaTravelItemExpandedSchema.parse(trip)
+    expand: 'travel_items,travel_items.from,travel_items.to'
+  }) as TripType & ExpandObject
+
+  // Filter out travel items with missing city data
+  if (trip.expand?.travel_items) {
+    trip.expand.travel_items = trip.expand.travel_items.filter(item => 
+      item.expand?.from && item.expand?.to
+    )
+  }
+
+  return tripSchemaTravelItemAndCityFromToExpandedSchema.parse(trip)
 }
 
 export async function getTrips() {
   const trips = await pb.collection('trip').getFullList({
     sort: '-created',
-    expand: 'travel_items'
+    expand: 'travel_items,travel_items.from,travel_items.to'
+  }) as Array<TripType & ExpandObject>
+
+  // Filter out travel items with missing city data for each trip
+  trips.forEach(trip => {
+    if (trip.expand?.travel_items) {
+      trip.expand.travel_items = trip.expand.travel_items.filter(item => 
+        item.expand?.from && item.expand?.to
+      )
+    }
   })
 
-  return tripSchemaTravelItemExpandedListSchema.parse(trips)
+  return tripSchemaTravelItemAndCityFromToExpandedListSchema.parse(trips)
 }
 
 export async function createTrip(trip: TripType, travelItems: TravelItemType[]) {
