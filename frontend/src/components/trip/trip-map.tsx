@@ -1,19 +1,12 @@
 'use client'
 
-import {
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  Polyline,
-  useMap
-} from 'react-leaflet'
+import { MapContainer, Marker, Popup, TileLayer, Polyline } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import React from 'react'
 import { Label } from '@/components/ui/label'
 import type { TravelItemType } from '@/schemas/trip-schema'
-import type { ExpandedTripType } from '@/schemas/trip-schema'
+import type { ExpandedTravelItemType } from '@/schemas/trip-schema'
 
 interface Coordinate {
   from: [number, number]
@@ -24,21 +17,81 @@ interface Coordinate {
 }
 
 interface TripMapProps {
-  trip: ExpandedTripType
+  travelItems: ExpandedTravelItemType[]
 }
 
-// This component handles map updates without reinitializing
-function MapUpdater ({ center }: { center: [number, number] }) {
-  const map = useMap()
+const MemoizedMap = React.memo(
+  ({
+    coordinates,
+    center,
+    icon,
+    travelItems
+  }: {
+    coordinates: Coordinate[]
+    center: [number, number]
+    icon: L.Icon
+    travelItems: ExpandedTravelItemType[]
+  }) => (
+    <MapContainer
+      key={`map-${travelItems
+        .map(item => item.id)
+        .join('-')}-${new Date().getTime()}`}
+      center={center}
+      zoomControl={false}
+      maxZoom={15}
+      minZoom={3}
+      zoom={4}
+      zoomSnap={0.5}
+      zoomDelta={0.5}
+      wheelPxPerZoomLevel={120}
+      maxBoundsViscosity={0.5}
+      maxBounds={L.latLngBounds(new L.LatLng(-90, -180), new L.LatLng(90, 180))}
+      style={{ height: '100%', width: '100%' }}
+    >
+      {coordinates.map((coord, index) => (
+        <React.Fragment
+          key={`${travelItems.map(item => item.id).join('-')}-route-${index}`}
+        >
+          {/* From marker */}
+          <Marker position={coord.from} icon={icon}>
+            <Popup>
+              <Label>{travelItems[index].expand?.from.name}</Label>
+              <div>Departure: {coord.startDate}</div>
+            </Popup>
+          </Marker>
 
-  React.useEffect(() => {
-    map.setView(center, map.getZoom())
-  }, [map, center])
+          {/* To marker */}
+          <Marker position={coord.to} icon={icon}>
+            <Popup>
+              <Label>{travelItems[index].expand?.to.name}</Label>
+              <div>Arrival: {coord.arrivalDate}</div>
+            </Popup>
+          </Marker>
 
-  return null
-}
+          {/* Line connecting the points with arrow */}
+          <Polyline
+            positions={[coord.from, coord.to]}
+            pathOptions={{
+              color: getTransportColor(coord.type),
+              weight: 3
+            }}
+          />
+        </React.Fragment>
+      ))}
 
-export default function TripMap ({ trip }: TripMapProps) {
+      <TileLayer
+        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+    </MapContainer>
+  ),
+  (prevProps, nextProps) => {
+    // Only re-render if travelItems have changed
+    return prevProps.travelItems === nextProps.travelItems
+  }
+)
+
+export default function TripMap ({ travelItems }: TripMapProps) {
   const icon = React.useMemo(
     () =>
       L.icon({
@@ -51,15 +104,16 @@ export default function TripMap ({ trip }: TripMapProps) {
 
   // Create an array of coordinates for the polyline
   const coordinates = React.useMemo(() => {
-    if (!trip.expand?.travel_items) return []
-
-    return trip.expand.travel_items
+    if (!travelItems) return []
+    return travelItems
       .map(item => {
         if (!item.expand) return null
         const from = item.expand.from
         const to = item.expand.to
 
         if (!from || !to) return null
+        if (!from.latitude || !from.longitude || !to.latitude || !to.longitude)
+          return null
 
         return {
           from: [from.latitude, from.longitude] as [number, number],
@@ -70,7 +124,7 @@ export default function TripMap ({ trip }: TripMapProps) {
         }
       })
       .filter((coord): coord is Coordinate => coord !== null)
-  }, [trip])
+  }, [travelItems])
 
   // Calculate center of the map based on all coordinates
   const center = React.useMemo(() => {
@@ -87,63 +141,12 @@ export default function TripMap ({ trip }: TripMapProps) {
 
   return (
     <div className='relative h-[50vh]'>
-      <MapContainer
-        key={new Date().getTime()}
+      <MemoizedMap
+        coordinates={coordinates}
         center={center}
-        zoomControl={false}
-        maxZoom={15}
-        minZoom={3}
-        zoom={4}
-        zoomSnap={0.5}
-        zoomDelta={0.5}
-        wheelPxPerZoomLevel={120}
-        maxBoundsViscosity={0.5}
-        maxBounds={L.latLngBounds(
-          new L.LatLng(-90, -180),
-          new L.LatLng(90, 180)
-        )}
-        style={{ height: '100%', width: '100%' }}
-      >
-        <MapUpdater center={center} />
-
-        {coordinates.map((coord, index) => (
-          <React.Fragment key={`${trip.id}-route-${index}`}>
-            {/* From marker */}
-            <Marker position={coord.from} icon={icon}>
-              <Popup>
-                <Label>
-                  {trip.expand?.travel_items[index].expand?.from.name}
-                </Label>
-                <div>Departure: {coord.startDate}</div>
-              </Popup>
-            </Marker>
-
-            {/* To marker */}
-            <Marker position={coord.to} icon={icon}>
-              <Popup>
-                <Label>
-                  {trip.expand?.travel_items[index].expand?.to.name}
-                </Label>
-                <div>Arrival: {coord.arrivalDate}</div>
-              </Popup>
-            </Marker>
-
-            {/* Line connecting the points with arrow */}
-            <Polyline
-              positions={[coord.from, coord.to]}
-              pathOptions={{
-                color: getTransportColor(coord.type),
-                weight: 3
-              }}
-            />
-          </React.Fragment>
-        ))}
-
-        <TileLayer
-          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-      </MapContainer>
+        icon={icon}
+        travelItems={travelItems}
+      />
     </div>
   )
 }

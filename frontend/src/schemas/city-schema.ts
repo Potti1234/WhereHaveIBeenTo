@@ -9,7 +9,7 @@ export const citySchema = z.object({
   unaccented_name: z.string().optional(),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
-  country: pbIdSchema,
+  country: pbIdSchema.optional(),
   state: pbIdSchema.optional(),
   wikiDataId: z.string().optional(),
   created: z.string().optional(),

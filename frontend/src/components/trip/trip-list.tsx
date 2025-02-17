@@ -3,13 +3,14 @@ import { CityItem } from './city-item'
 import { TravelItem } from './travel-item'
 import { AddCityButton } from '@/components/trip/add-city-button'
 import { ArrowDown } from 'lucide-react'
+import { City } from '@/schemas/city-schema'
 
 interface TripListProps {
   travelItems: TravelItemType[]
   cityItems: CityItemType[]
   updateTravelItem: (id: string, updates: Partial<TravelItemType>) => void
   removeTravelItem: (id: string) => void
-  updateCityId: (index: number, id: string) => void
+  updateCity: (index: number, city: City) => void
   addTravelItem: (index: number) => void
 }
 
@@ -18,7 +19,7 @@ export function TripList ({
   cityItems,
   updateTravelItem,
   removeTravelItem,
-  updateCityId,
+  updateCity,
   addTravelItem
 }: TripListProps) {
   return (
@@ -27,7 +28,7 @@ export function TripList ({
         <div key={cityItem.id}>
           <CityItem
             item={cityItem}
-            onCityChange={id => updateCityId(index, id)}
+            onCityChange={city => updateCity(index, city)}
             isFirst={index === 0}
           />
           <AddCityButton onClick={() => addTravelItem(index)} />

@@ -46,6 +46,10 @@ export const travelItemSchemaExpandCityFromToSchema = travelItemSchema.extend({
   })
 })
 
+export type ExpandedTravelItemType = z.infer<
+  typeof travelItemSchemaExpandCityFromToSchema
+>
+
 export const tripSchemaTravelItemAndCityFromToExpandedSchema = tripSchema.extend({
   expand: z.object({
     travel_items: z.array(travelItemSchemaExpandCityFromToSchema)

@@ -4,9 +4,11 @@ import type { CityItemType } from '@/schemas/trip-schema'
 import { format } from 'date-fns'
 import { Card } from '../ui/card'
 import { CityInput } from '../shared/city-input'
+import { City } from '@/schemas/city-schema'
+
 interface CityItemProps {
   item: CityItemType
-  onCityChange: (id: string) => void
+  onCityChange: (city: City) => void
   isFirst: boolean
 }
 
@@ -19,7 +21,7 @@ export function CityItem ({ item, onCityChange, isFirst }: CityItemProps) {
           <CityInput
             onSelect={city => {
               if (city.id) {
-                onCityChange(city.id)
+                onCityChange(city)
               }
             }}
             placeholder={isFirst ? 'Starting city' : 'Destination city'}

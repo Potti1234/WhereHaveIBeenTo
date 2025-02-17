@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { TripList } from '@/components/trip/trip-list'
-import type { TravelItemType, ExpandedTripType } from '@/schemas/trip-schema'
+import type {
+  TravelItemType,
+  ExpandedTripType,
+  ExpandedTravelItemType
+} from '@/schemas/trip-schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,10 +14,11 @@ import { useTrip } from '@/hooks/use-trip'
 import useAuth from '@/hooks/use-auth'
 import { useEffect } from 'react'
 import TripMap from './trip-map'
+import { City } from '@/schemas/city-schema'
 
 export default function TripPlanner (props: {
   trip: ExpandedTripType
-  travelItems: TravelItemType[]
+  travelItems: ExpandedTravelItemType[]
   edit: boolean
 }) {
   const { user } = useAuth()
@@ -25,7 +30,7 @@ export default function TripPlanner (props: {
       travel_items: []
     }
   })
-  const [travelItems, setTravelItems] = useState<TravelItemType[]>([])
+  const [travelItems, setTravelItems] = useState<ExpandedTravelItemType[]>([])
 
   const { createTrip, updateTrip } = useTrip()
 
@@ -34,26 +39,46 @@ export default function TripPlanner (props: {
       setTrip(props.trip)
       setTravelItems(props.travelItems)
     } else {
-      const startTravelItem: TravelItemType = {
+      const startTravelItem: ExpandedTravelItemType = {
         type: 'bus',
         start_date: null,
         arrival_date: null,
         order: 0,
         from: '',
-        to: ''
+        to: '',
+        expand: {
+          from: {
+            id: ''
+          },
+          to: { id: '' }
+        }
       }
       setTravelItems([startTravelItem])
     }
   }, [props.edit])
 
+  useEffect(() => {
+    setTrip(prevTrip => ({
+      ...prevTrip,
+      expand: {
+        ...prevTrip.expand,
+        travel_items: travelItems
+      }
+    }))
+  }, [travelItems])
+
   const addCity = (index: number) => {
-    const newItem: TravelItemType = {
+    const newItem: ExpandedTravelItemType = {
       type: 'bus',
       start_date: null,
       arrival_date: null,
       order: index,
       from: travelItems[index - 1]?.to || '',
-      to: ''
+      to: '',
+      expand: {
+        from: travelItems[index - 1]?.expand?.to || { id: '' },
+        to: { id: '' }
+      }
     }
 
     setTravelItems(prevItems => {
@@ -81,19 +106,31 @@ export default function TripPlanner (props: {
     )
   }
 
-  const updateCityId = (index: number, id: string) => {
+  const updateCity = (index: number, city: City) => {
     setTravelItems(prevItems => {
       const newItems = [...prevItems]
       if (index === 0) {
         if (newItems[0]) {
-          newItems[0] = { ...newItems[0], from: id }
+          newItems[0] = {
+            ...newItems[0],
+            from: city.id,
+            expand: { ...newItems[0].expand, from: city }
+          }
         }
       } else {
         if (newItems[index - 1]) {
-          newItems[index - 1] = { ...newItems[index - 1], to: id }
+          newItems[index - 1] = {
+            ...newItems[index - 1],
+            to: city.id,
+            expand: { ...newItems[index - 1].expand, to: city }
+          }
         }
         if (newItems[index]) {
-          newItems[index] = { ...newItems[index], from: id }
+          newItems[index] = {
+            ...newItems[index],
+            from: city.id,
+            expand: { ...newItems[index].expand, from: city }
+          }
         }
       }
       return newItems
@@ -180,14 +217,14 @@ export default function TripPlanner (props: {
         </CardContent>
       </Card>
 
-      <TripMap trip={trip} />
+      <TripMap travelItems={travelItems} />
 
       <TripList
         travelItems={travelItems}
         cityItems={calculateCityItems(travelItems)}
         updateTravelItem={updateTravelItem}
         removeTravelItem={removeTravelItem}
-        updateCityId={updateCityId}
+        updateCity={updateCity}
         addTravelItem={addCity}
       />
     </div>
