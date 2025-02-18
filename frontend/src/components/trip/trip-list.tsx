@@ -1,4 +1,8 @@
-import type { TravelItemType, CityItemType } from '@/schemas/trip-schema'
+import type {
+  ExpandedTravelItemType,
+  TravelItemType,
+  CityItemType
+} from '@/schemas/trip-schema'
 import { CityItem } from './city-item'
 import { TravelItem } from './travel-item'
 import { AddCityButton } from '@/components/trip/add-city-button'
@@ -6,7 +10,7 @@ import { ArrowDown } from 'lucide-react'
 import { City } from '@/schemas/city-schema'
 
 interface TripListProps {
-  travelItems: TravelItemType[]
+  travelItems: ExpandedTravelItemType[]
   cityItems: CityItemType[]
   updateTravelItem: (id: string, updates: Partial<TravelItemType>) => void
   removeTravelItem: (id: string) => void
