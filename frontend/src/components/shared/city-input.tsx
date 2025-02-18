@@ -57,9 +57,7 @@ export function CityInput ({
                 alt='Flag'
                 className='mr-2 h-4 w-4 inline-block'
               />
-              {`${selectedCity.name} / ${
-                selectedCity.expand?.state?.name || 'N/A'
-              } / ${selectedCity.expand?.country?.name || 'N/A'}`}
+              {`${selectedCity.name}`}
             </span>
           ) : (
             <span className='text-muted-foreground'>{placeholder}</span>

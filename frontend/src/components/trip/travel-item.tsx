@@ -44,33 +44,35 @@ export function TravelItem ({ item, updateItem, removeItem }: TravelItemProps) {
       >
         <Minus className='h-4 w-4' />
       </Button>
-      <div className='grid grid-cols-2 gap-4 items-end'>
-        <div className='flex items-center space-x-2'>
+      <div className='flex flex-row gap-4 items-center w-full'>
+        <div className='flex items-center space-x-2 w-full md:w-2/5'>
           <Icon className='w-6 h-6 flex-shrink-0' />
-          <Select
-            value={item.type}
-            onValueChange={value =>
-              updateItem({ type: value as TravelItemType['type'] })
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder='Select travel mode' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='plane'>Plane</SelectItem>
-              <SelectItem value='train'>Train</SelectItem>
-              <SelectItem value='bus'>Bus</SelectItem>
-              <SelectItem value='car'>Car</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className='w-[140px] md:w-full'>
+            <Select
+              value={item.type}
+              onValueChange={value =>
+                updateItem({ type: value as TravelItemType['type'] })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder='Transport' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='plane'>Plane</SelectItem>
+                <SelectItem value='train'>Train</SelectItem>
+                <SelectItem value='bus'>Bus</SelectItem>
+                <SelectItem value='car'>Car</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div>
+        <div className='w-full md:w-2/5'>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant={'outline'}
                 className={cn(
-                  'w-[280px] justify-start text-left font-normal',
+                  'w-[180px] md:w-full justify-start text-left font-normal',
                   !item.start_date && 'text-muted-foreground'
                 )}
               >
@@ -82,7 +84,7 @@ export function TravelItem ({ item, updateItem, removeItem }: TravelItemProps) {
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className='w-auto p-0'>
+            <PopoverContent className='w-auto p-0' sideOffset={4}>
               <Calendar
                 mode='single'
                 selected={
