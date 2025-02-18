@@ -44,10 +44,10 @@ export function TravelItem ({ item, updateItem, removeItem }: TravelItemProps) {
       >
         <Minus className='h-4 w-4' />
       </Button>
-      <div className='flex flex-row gap-4 items-center w-full'>
+      <div className='flex flex-row gap-2 items-center w-full'>
         <div className='flex items-center space-x-2 w-full md:w-2/5'>
           <Icon className='w-6 h-6 flex-shrink-0' />
-          <div className='w-[140px] md:w-full'>
+          <div className='w-[80px] md:w-full'>
             <Select
               value={item.type}
               onValueChange={value =>

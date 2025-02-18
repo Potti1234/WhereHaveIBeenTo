@@ -30,6 +30,7 @@ export function TripList ({
             item={cityItem}
             onCityChange={city => updateCity(index, city)}
             isFirst={index === 0}
+            isLast={index === cityItems.length - 1}
           />
           <AddCityButton onClick={() => addTravelItem(index)} />
           {index < travelItems.length && (

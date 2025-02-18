@@ -10,12 +10,18 @@ interface CityItemProps {
   item: CityItemType
   onCityChange: (city: City) => void
   isFirst: boolean
+  isLast: boolean
 }
 
-export function CityItem ({ item, onCityChange, isFirst }: CityItemProps) {
+export function CityItem ({
+  item,
+  onCityChange,
+  isFirst,
+  isLast
+}: CityItemProps) {
   return (
-    <Card className='relative p-4  rounded-lg shadow'>
-      <div className='grid grid-cols-2 gap-4 items-end'>
+    <Card className='relative p-4 rounded-lg shadow'>
+      <div className='grid grid-cols-1 md:grid-cols-[2fr,3fr] gap-4 items-end'>
         <div>
           <Label htmlFor={`city-name-${item.id}`}>City</Label>
           <CityInput
@@ -28,21 +34,55 @@ export function CityItem ({ item, onCityChange, isFirst }: CityItemProps) {
             selectedCityId={item.cityId}
           />
         </div>
-        <div>
-          <Label htmlFor={`start-date-${item.id}`}>
-            {isFirst ? 'Trip Start Date' : 'Arrival Date'}
-          </Label>
-          <Input
-            id={`start-date-${item.id}`}
-            type='date'
-            value={
-              item.startDate
-                ? format(new Date(item.startDate), 'yyyy-MM-dd')
-                : ''
-            }
-            readOnly
-          />
-        </div>
+
+        {isFirst || isLast ? (
+          <div>
+            <Label htmlFor={`start-date-${item.id}`}>
+              {isFirst ? 'Trip Start Date' : 'Arrival Date'}
+            </Label>
+            <Input
+              id={`start-date-${item.id}`}
+              type='date'
+              value={
+                item.startDate
+                  ? format(new Date(item.startDate), 'yyyy-MM-dd')
+                  : ''
+              }
+              readOnly
+            />
+          </div>
+        ) : (
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div>
+              <Label htmlFor={`arrival-date-${item.id}`}>Arrival Date</Label>
+              <Input
+                id={`arrival-date-${item.id}`}
+                type='date'
+                value={
+                  item.startDate
+                    ? format(new Date(item.startDate), 'yyyy-MM-dd')
+                    : ''
+                }
+                readOnly
+              />
+            </div>
+            <div>
+              <Label htmlFor={`departure-date-${item.id}`}>
+                Departure Date
+              </Label>
+              <Input
+                id={`departure-date-${item.id}`}
+                type='date'
+                value={
+                  item.endDate
+                    ? format(new Date(item.endDate), 'yyyy-MM-dd')
+                    : ''
+                }
+                readOnly
+              />
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   )
