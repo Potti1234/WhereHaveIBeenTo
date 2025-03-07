@@ -30,7 +30,7 @@ export const construct12GoUrl = ({
   const formattedToCity = formatCityName(toCity)
   const dateParam = date ? `&date=${formatDate(date)}` : ''
 
-  return `https://12go.com/en/travel/${formattedFromCity}/${formattedToCity}?people=${passengers}${dateParam}&direction=forward`
+  return `https://12go.com/en/travel/${formattedFromCity}/${formattedToCity}?people=${passengers}${dateParam}&direction=forward?z=11294447`
 }
 
 export const getProviderUrl = (
