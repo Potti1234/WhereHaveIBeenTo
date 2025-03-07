@@ -30,6 +30,7 @@ import { Route as AuthLoginImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordImport } from './routes/auth/forgot-password'
 import { Route as ExploreCountryIndexImport } from './routes/explore/country/index'
 import { Route as ExploreCityIndexImport } from './routes/explore/city/index'
+import { Route as TripViewTripIdImport } from './routes/trip/view/$tripId'
 import { Route as TripEditTripIdImport } from './routes/trip/edit/$tripId'
 import { Route as ExploreCountryCountryIdImport } from './routes/explore/country/$countryId'
 import { Route as ExploreCityCityIdImport } from './routes/explore/city/$cityId'
@@ -147,6 +148,12 @@ const ExploreCountryIndexRoute = ExploreCountryIndexImport.update({
 const ExploreCityIndexRoute = ExploreCityIndexImport.update({
   id: '/explore/city/',
   path: '/explore/city/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const TripViewTripIdRoute = TripViewTripIdImport.update({
+  id: '/trip/view/$tripId',
+  path: '/trip/view/$tripId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -312,6 +319,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TripEditTripIdImport
       parentRoute: typeof rootRoute
     }
+    '/trip/view/$tripId': {
+      id: '/trip/view/$tripId'
+      path: '/trip/view/$tripId'
+      fullPath: '/trip/view/$tripId'
+      preLoaderRoute: typeof TripViewTripIdImport
+      parentRoute: typeof rootRoute
+    }
     '/explore/city/': {
       id: '/explore/city/'
       path: '/explore/city'
@@ -352,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/explore/city/$cityId': typeof ExploreCityCityIdRoute
   '/explore/country/$countryId': typeof ExploreCountryCountryIdRoute
   '/trip/edit/$tripId': typeof TripEditTripIdRoute
+  '/trip/view/$tripId': typeof TripViewTripIdRoute
   '/explore/city': typeof ExploreCityIndexRoute
   '/explore/country': typeof ExploreCountryIndexRoute
 }
@@ -377,6 +392,7 @@ export interface FileRoutesByTo {
   '/explore/city/$cityId': typeof ExploreCityCityIdRoute
   '/explore/country/$countryId': typeof ExploreCountryCountryIdRoute
   '/trip/edit/$tripId': typeof TripEditTripIdRoute
+  '/trip/view/$tripId': typeof TripViewTripIdRoute
   '/explore/city': typeof ExploreCityIndexRoute
   '/explore/country': typeof ExploreCountryIndexRoute
 }
@@ -403,6 +419,7 @@ export interface FileRoutesById {
   '/explore/city/$cityId': typeof ExploreCityCityIdRoute
   '/explore/country/$countryId': typeof ExploreCountryCountryIdRoute
   '/trip/edit/$tripId': typeof TripEditTripIdRoute
+  '/trip/view/$tripId': typeof TripViewTripIdRoute
   '/explore/city/': typeof ExploreCityIndexRoute
   '/explore/country/': typeof ExploreCountryIndexRoute
 }
@@ -430,6 +447,7 @@ export interface FileRouteTypes {
     | '/explore/city/$cityId'
     | '/explore/country/$countryId'
     | '/trip/edit/$tripId'
+    | '/trip/view/$tripId'
     | '/explore/city'
     | '/explore/country'
   fileRoutesByTo: FileRoutesByTo
@@ -454,6 +472,7 @@ export interface FileRouteTypes {
     | '/explore/city/$cityId'
     | '/explore/country/$countryId'
     | '/trip/edit/$tripId'
+    | '/trip/view/$tripId'
     | '/explore/city'
     | '/explore/country'
   id:
@@ -478,6 +497,7 @@ export interface FileRouteTypes {
     | '/explore/city/$cityId'
     | '/explore/country/$countryId'
     | '/trip/edit/$tripId'
+    | '/trip/view/$tripId'
     | '/explore/city/'
     | '/explore/country/'
   fileRoutesById: FileRoutesById
@@ -504,6 +524,7 @@ export interface RootRouteChildren {
   ExploreCityCityIdRoute: typeof ExploreCityCityIdRoute
   ExploreCountryCountryIdRoute: typeof ExploreCountryCountryIdRoute
   TripEditTripIdRoute: typeof TripEditTripIdRoute
+  TripViewTripIdRoute: typeof TripViewTripIdRoute
   ExploreCityIndexRoute: typeof ExploreCityIndexRoute
   ExploreCountryIndexRoute: typeof ExploreCountryIndexRoute
 }
@@ -529,6 +550,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreCityCityIdRoute: ExploreCityCityIdRoute,
   ExploreCountryCountryIdRoute: ExploreCountryCountryIdRoute,
   TripEditTripIdRoute: TripEditTripIdRoute,
+  TripViewTripIdRoute: TripViewTripIdRoute,
   ExploreCityIndexRoute: ExploreCityIndexRoute,
   ExploreCountryIndexRoute: ExploreCountryIndexRoute,
 }
@@ -563,6 +585,7 @@ export const routeTree = rootRoute
         "/explore/city/$cityId",
         "/explore/country/$countryId",
         "/trip/edit/$tripId",
+        "/trip/view/$tripId",
         "/explore/city/",
         "/explore/country/"
       ]
@@ -626,6 +649,9 @@ export const routeTree = rootRoute
     },
     "/trip/edit/$tripId": {
       "filePath": "trip/edit/$tripId.tsx"
+    },
+    "/trip/view/$tripId": {
+      "filePath": "trip/view/$tripId.tsx"
     },
     "/explore/city/": {
       "filePath": "explore/city/index.tsx"

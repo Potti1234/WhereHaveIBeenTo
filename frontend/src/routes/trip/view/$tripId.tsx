@@ -3,12 +3,12 @@ import { useParams } from '@tanstack/react-router'
 import { useTrip } from '@/hooks/use-trip'
 import TripPlanner from '@/components/trip/trip-planner'
 
-export const Route = createFileRoute('/trip/edit/$tripId')({
+export const Route = createFileRoute('/trip/view/$tripId')({
   component: RouteComponent
 })
 
 function RouteComponent () {
-  const { tripId } = useParams({ from: '/trip/edit/$tripId' })
+  const { tripId } = useParams({ from: '/trip/view/$tripId' })
   const { trip } = useTrip(tripId)
 
   if (!trip) {
@@ -19,7 +19,7 @@ function RouteComponent () {
     <TripPlanner
       trip={trip}
       travelItems={trip.expand.travel_items || []}
-      mode='edit'
+      mode='view'
     />
   )
 }

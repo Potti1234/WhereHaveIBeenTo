@@ -16,10 +16,12 @@ import { useEffect } from 'react'
 import TripMap from './trip-map'
 import { City } from '@/schemas/city-schema'
 
+type TripPlannerMode = 'edit' | 'view' | 'create'
+
 export default function TripPlanner (props: {
   trip: ExpandedTripType
   travelItems: ExpandedTravelItemType[]
-  edit: boolean
+  mode: TripPlannerMode
 }) {
   const { user } = useAuth()
   const [trip, setTrip] = useState<ExpandedTripType>({
@@ -35,7 +37,7 @@ export default function TripPlanner (props: {
   const { createTrip, updateTrip } = useTrip()
 
   useEffect(() => {
-    if (props.edit) {
+    if (props.mode === 'edit' || props.mode === 'view') {
       setTrip(props.trip)
       setTravelItems(props.travelItems)
     } else {
@@ -55,7 +57,7 @@ export default function TripPlanner (props: {
       }
       setTravelItems([startTravelItem])
     }
-  }, [props.edit])
+  }, [props.mode])
 
   useEffect(() => {
     setTrip(prevTrip => ({
@@ -168,7 +170,7 @@ export default function TripPlanner (props: {
     // validation
 
     // save trip
-    if (props.edit && props.trip.id) {
+    if (props.mode === 'edit' && props.trip.id) {
       updateTrip({
         id: props.trip.id,
         trip,
@@ -186,7 +188,12 @@ export default function TripPlanner (props: {
     <div className='container mx-auto p-4 space-y-6'>
       <div className='flex items-center justify-between'>
         <h1 className='text-2xl font-bold'>Trip Planner</h1>
-        <Button onClick={handleSaveTrip}>Save Trip</Button>
+        {props.mode === 'edit' && (
+          <Button onClick={handleSaveTrip}>Update Trip</Button>
+        )}
+        {props.mode === 'create' && (
+          <Button onClick={handleSaveTrip}>Create Trip</Button>
+        )}
       </div>
 
       <Card>
@@ -200,6 +207,7 @@ export default function TripPlanner (props: {
                 setTrip(prev => ({ ...prev, name: e.target.value }))
               }
               placeholder='Enter trip name'
+              disabled={props.mode === 'view'}
             />
           </div>
           <div className='space-y-2'>
@@ -212,6 +220,7 @@ export default function TripPlanner (props: {
               }
               placeholder='Enter trip description'
               rows={3}
+              disabled={props.mode === 'view'}
             />
           </div>
         </CardContent>

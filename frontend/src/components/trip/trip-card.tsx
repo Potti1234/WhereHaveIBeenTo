@@ -18,7 +18,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction
 } from '@/components/ui/alert-dialog'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, Eye } from 'lucide-react'
 
 interface TripCardProps {
   id: string
@@ -37,6 +37,14 @@ export function TripCard ({ id, title, description, onDelete }: TripCardProps) {
           <CardTitle>{title}</CardTitle>
         </div>
         <div className='flex gap-2'>
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={() => navigate({ to: `/trip/view/${id}` })}
+            title='View trip'
+          >
+            <Eye className='h-4 w-4' />
+          </Button>
           <Button
             variant='ghost'
             size='icon'
