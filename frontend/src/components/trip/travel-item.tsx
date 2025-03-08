@@ -25,6 +25,7 @@ import { getProviderUrl } from '@/lib/url-constructor'
 
 interface TravelItemProps {
   item: ExpandedTravelItemType
+  disabled: boolean
   updateItem: (updates: Partial<ExpandedTravelItemType>) => void
   removeItem: () => void
 }
@@ -36,7 +37,12 @@ const travelIcons: Record<ExpandedTravelItemType['type'], React.ElementType> = {
   car: Car
 }
 
-export function TravelItem ({ item, updateItem, removeItem }: TravelItemProps) {
+export function TravelItem ({
+  item,
+  updateItem,
+  removeItem,
+  disabled
+}: TravelItemProps) {
   const Icon = travelIcons[item.type] as React.ElementType
   const providerInfo = getProviderUrl(item.type, {
     fromCity: item.expand.from.unaccented_name ?? '',
@@ -47,14 +53,16 @@ export function TravelItem ({ item, updateItem, removeItem }: TravelItemProps) {
 
   return (
     <Card className='relative p-4 rounded-lg shadow'>
-      <Button
-        variant='ghost'
-        size='icon'
-        className='absolute top-2 right-2 z-10'
-        onClick={removeItem}
-      >
-        <Minus className='h-4 w-4' />
-      </Button>
+      {!disabled && (
+        <Button
+          variant='ghost'
+          size='icon'
+          className='absolute top-2 right-2 z-10'
+          onClick={removeItem}
+        >
+          <Minus className='h-4 w-4' />
+        </Button>
+      )}
       <div className='flex flex-col md:flex-row gap-2'>
         <div className='flex flex-row gap-1 items-center w-full md:w-4/5 pr-8'>
           <div className='flex items-center space-x-2 w-full md:w-1/2'>
@@ -65,6 +73,7 @@ export function TravelItem ({ item, updateItem, removeItem }: TravelItemProps) {
                 onValueChange={value =>
                   updateItem({ type: value as TravelItemType['type'] })
                 }
+                disabled={disabled}
               >
                 <SelectTrigger>
                   <SelectValue placeholder='Transport' />
@@ -87,6 +96,7 @@ export function TravelItem ({ item, updateItem, removeItem }: TravelItemProps) {
                     'w-[160px] md:w-full justify-start text-left font-normal',
                     !item.start_date && 'text-muted-foreground'
                   )}
+                  disabled={disabled}
                 >
                   <CalendarIcon className='mr-2 h-4 w-4' />
                   {item.start_date ? (

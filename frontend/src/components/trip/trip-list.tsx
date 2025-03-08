@@ -12,6 +12,7 @@ import { City } from '@/schemas/city-schema'
 interface TripListProps {
   travelItems: ExpandedTravelItemType[]
   cityItems: CityItemType[]
+  disabled: boolean
   updateTravelItem: (id: string, updates: Partial<TravelItemType>) => void
   removeTravelItem: (id: string) => void
   updateCity: (index: number, city: City) => void
@@ -21,6 +22,7 @@ interface TripListProps {
 export function TripList ({
   travelItems,
   cityItems,
+  disabled,
   updateTravelItem,
   removeTravelItem,
   updateCity,
@@ -35,8 +37,9 @@ export function TripList ({
             onCityChange={city => updateCity(index, city)}
             isFirst={index === 0}
             isLast={index === cityItems.length - 1}
+            disabled={disabled}
           />
-          <AddCityButton onClick={() => addTravelItem(index)} />
+          {!disabled && <AddCityButton onClick={() => addTravelItem(index)} />}
           {index < travelItems.length && (
             <div className='relative ml-8 my-4'>
               <div className='absolute left-[-1rem] top-[-3rem] bottom-[-1rem] w-[2px] bg-gray-200 z-10' />
@@ -63,6 +66,7 @@ export function TripList ({
                 removeItem={() =>
                   removeTravelItem(travelItems[index].id || `travel-${index}`)
                 }
+                disabled={disabled}
               />
             </div>
           )}

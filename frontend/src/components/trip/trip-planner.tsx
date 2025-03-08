@@ -14,6 +14,7 @@ import { useTrip } from '@/hooks/use-trip'
 import useAuth from '@/hooks/use-auth'
 import { useEffect } from 'react'
 import TripMap from './trip-map'
+import TripChat from './trip-chat'
 import { City } from '@/schemas/city-schema'
 
 type TripPlannerMode = 'edit' | 'view' | 'create'
@@ -235,7 +236,9 @@ export default function TripPlanner (props: {
         removeTravelItem={removeTravelItem}
         updateCity={updateCity}
         addTravelItem={addCity}
+        disabled={props.mode === 'view'}
       />
+      {props.mode !== 'view' && <TripChat />}
     </div>
   )
 }

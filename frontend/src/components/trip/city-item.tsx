@@ -11,13 +11,15 @@ interface CityItemProps {
   onCityChange: (city: City) => void
   isFirst: boolean
   isLast: boolean
+  disabled: boolean
 }
 
 export function CityItem ({
   item,
   onCityChange,
   isFirst,
-  isLast
+  isLast,
+  disabled
 }: CityItemProps) {
   return (
     <Card className='relative p-4 rounded-lg shadow'>
@@ -32,6 +34,7 @@ export function CityItem ({
             }}
             placeholder={isFirst ? 'Starting city' : 'Destination city'}
             selectedCityId={item.cityId}
+            disabled={disabled}
           />
         </div>
 

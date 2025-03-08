@@ -21,12 +21,14 @@ interface CityInputProps {
   onSelect: (city: CityWithCountryAndState) => void
   placeholder?: string
   selectedCityId?: string | null
+  disabled?: boolean
 }
 
 export function CityInput ({
   onSelect,
   placeholder = 'Select a city...',
-  selectedCityId
+  selectedCityId,
+  disabled
 }: CityInputProps) {
   const [open, setOpen] = React.useState(false)
   const [searchTerm, setSearchTerm] = React.useState('')
@@ -49,6 +51,7 @@ export function CityInput ({
           role='combobox'
           aria-expanded={open}
           className='w-full justify-between'
+          disabled={disabled}
         >
           {selectedCity ? (
             <span>
