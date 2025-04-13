@@ -95,6 +95,8 @@ func (app *application) InitCurrencyUpdater() {
 
 		return se.Next()
 	})
+
+	app.InitCurrencyConversionEndpoint()
 }
 
 func (app *application) InitCurrencyConversionEndpoint() {
@@ -127,4 +129,5 @@ func (app *application) InitCurrencyConversionEndpoint() {
 
 		return se.Next()
 	})
+
 }

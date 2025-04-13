@@ -39,6 +39,7 @@ func main() {
 	app.disableHealthRouteLogging()
 
 	app.InitCurrencyUpdater()
+	app.InitAIPlanner()
 
 	if err := app.pb.Start(); err != nil {
 		log.Fatal(err)
