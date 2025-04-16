@@ -1,13 +1,21 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, SetStateAction, Dispatch } from 'react'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Send } from 'lucide-react'
+import { Send, Loader2 } from 'lucide-react'
+import { createTrip } from '@/services/api-planner'
+import { ExpandedTripType, ExpandedTravelItemType } from '@/schemas/trip-schema'
 
-export default function TripChat () {
+interface TripChatProps {
+  setTrip: Dispatch<SetStateAction<ExpandedTripType>>
+  setTravelItems: Dispatch<SetStateAction<ExpandedTravelItemType[]>>
+}
+
+export default function TripChat (props: TripChatProps) {
   const [message, setMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const adjustTextareaHeight = () => {
@@ -23,10 +31,14 @@ export default function TripChat () {
     adjustTextareaHeight()
   }, [message])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    setIsLoading(true)
     e.preventDefault()
-    // TODO: Implement chat functionality
+    const trip = await createTrip(message)
     setMessage('')
+    setIsLoading(false)
+    props.setTrip(trip)
+    props.setTravelItems(trip.expand.travel_items)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -56,8 +68,13 @@ export default function TripChat () {
               size='icon'
               className='absolute right-0 bottom-0'
               onClick={handleSubmit}
+              disabled={isLoading}
             >
-              <Send className='h-4 w-4' />
+              {isLoading ? (
+                <Loader2 className='h-4 w-4 animate-spin' />
+              ) : (
+                <Send className='h-4 w-4' />
+              )}
             </Button>
           </div>
         </div>

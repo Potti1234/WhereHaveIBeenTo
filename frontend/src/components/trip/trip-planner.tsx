@@ -169,6 +169,8 @@ export default function TripPlanner (props: {
 
   const handleSaveTrip = () => {
     // validation
+    console.log(trip)
+    console.log(travelItems)
 
     // save trip
     if (props.mode === 'edit' && props.trip.id) {
@@ -238,7 +240,9 @@ export default function TripPlanner (props: {
         addTravelItem={addCity}
         disabled={props.mode === 'view'}
       />
-      {props.mode !== 'view' && <TripChat />}
+      {props.mode !== 'view' && (
+        <TripChat setTrip={setTrip} setTravelItems={setTravelItems} />
+      )}
     </div>
   )
 }
