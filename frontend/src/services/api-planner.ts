@@ -10,7 +10,7 @@ export async function createTrip(prompt: string): Promise<ExpandedTripType> {
     }
   })
 
-  let apiResponseData: any = response;
+  const apiResponseData: any = response;
 
   if (
     !apiResponseData || typeof apiResponseData !== 'object' ||
