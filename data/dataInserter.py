@@ -608,21 +608,25 @@ def deduplicate_geonames_by_population():
 
 def insert_deduplicated_geonames_data(start_row=0, end_row=None):
     """
-    Inserts deduplicated Geonames city data into the PocketBase 'city' collection.
+    Inserts deduplicated Geonames city data into the PocketBase 'city' collection
+    using the batch API for improved performance.
     Assumes 'country_id' in the input CSV is the PocketBase country record ID.
     State information is omitted as it's not reliably mapped in the source.
     """
     token = get_admin_token()
     headers = {
-        "Authorization": "{}".format(token)
+        "Authorization": "{}".format(token),
+        "Content-Type": "application/json", # Ensure correct content type for batch
     }
+    batch_api_url = f"{BASE_URL}/api/batch"
+    create_record_url = "/api/collections/city/records"
+    batch_size = 500 # Recommended batch size for PocketBase
 
     # Load deduplicated Geonames data
     input_file = 'data/edit_data/geonames_deduplicated_by_population.csv'
     try:
-        # Specify dtype for 'Alternate Names' to handle potential large strings or NAs better
-        dtypes = {'Alternate Names': 'object'} # Treat as generic object first
-        df = pd.read_csv(input_file, sep=';', dtype=dtypes, low_memory=False) # low_memory=False can help with mixed types
+        dtypes = {'Alternate Names': 'object'}
+        df = pd.read_csv(input_file, sep=';', dtype=dtypes, low_memory=False)
     except FileNotFoundError:
         print(f"Error: Input file not found: {input_file}")
         return
@@ -631,137 +635,159 @@ def insert_deduplicated_geonames_data(start_row=0, end_row=None):
         traceback.print_exc()
         return
 
-    # Prepare needed columns, handle potential missing columns gracefully
+    # Prepare needed columns and data
     required_cols = ['Geoname ID', 'Name', 'ASCII Name', 'Coordinates', 'Population', 'country_id', 'Alternate Names']
     if not all(col in df.columns for col in required_cols):
         missing = [col for col in required_cols if col not in df.columns]
         print(f"Error: Input file {input_file} is missing required columns: {missing}")
         return
 
-    # Prepare unaccented name (use lowercase ASCII Name)
     df['unaccented_name'] = df['ASCII Name'].str.lower().str.strip()
-
-    # Extract lat/lon
     try:
-        # Handle potential errors during split more robustly
         coords = df['Coordinates'].astype(str).str.split(',', expand=True)
-        if coords.shape[1] >= 2: # Ensure we have at least two columns after split
+        if coords.shape[1] >= 2:
             df['latitude'] = pd.to_numeric(coords[0], errors='coerce')
             df['longitude'] = pd.to_numeric(coords[1], errors='coerce')
         else:
             print("Warning: Coordinate column split did not produce two columns for some rows.")
-            df['latitude'] = pd.NA # Assign pandas NA for consistency
+            df['latitude'] = pd.NA
             df['longitude'] = pd.NA
     except Exception as e:
         print(f"Error parsing Coordinates column: {e}")
-        # Fallback to NA if parsing fails
         df['latitude'] = pd.NA
         df['longitude'] = pd.NA
 
     # --- Row Slicing for Chunking ---
-    # Note: iloc slices by position, independent of the actual index labels
     if end_row is None:
         end_row = len(df)
     df_to_process = df.iloc[start_row:end_row]
 
-    # --- API Insertion ---
-    print(f"Starting insertion for rows {start_row} to {end_row}...")
+    # --- API Batch Insertion ---
+    print(f"Starting batch insertion for rows {start_row} to {end_row}...")
     successful_inserts = 0
     failed_inserts = 0
     skipped_invalid_coord = 0
     skipped_invalid_alt_name = 0
+    skipped_missing_data = 0
+    batch_requests = []
 
-    for index, row in df_to_process.iterrows():
+    total_rows_in_chunk = len(df_to_process)
+
+    for i, (original_index, row) in enumerate(df_to_process.iterrows()):
         # --- Coordinate Validation ---
         latitude = row['latitude']
         longitude = row['longitude']
-
-        # Use pandas.isna() for robust NA check (covers None, NaN, pd.NA)
         if pd.isna(latitude) or pd.isna(longitude) or \
            (isinstance(latitude, float) and (math.isnan(latitude) or math.isinf(latitude))) or \
            (isinstance(longitude, float) and (math.isnan(longitude) or math.isinf(longitude))):
-            print(f"Skipping row at iloc index {index} (Geoname ID: {row.get('Geoname ID', 'N/A')}) due to invalid coordinates: lat={latitude}, lon={longitude}")
+            # print(f"Skipping row at iloc index {index + start_row} (Geoname ID: {row.get('Geoname ID', 'N/A')}) due to invalid coordinates.")
             skipped_invalid_coord += 1
-            continue # Skip this row
+            continue
 
         # --- Alternate Names Validation ---
         alt_names = row['Alternate Names']
-        # Check if alt_names is NaN or None, replace with None for JSON compatibility
         if pd.isna(alt_names):
             alt_names_payload = None
-        # Optional: Check if it's a valid string (if it's not NaN)
         elif not isinstance(alt_names, str):
-             print(f"Warning: Unexpected type for Alternate Names in row at iloc index {index} (Geoname ID: {row.get('Geoname ID', 'N/A')}). Type: {type(alt_names)}. Value: {alt_names}. Treating as invalid.")
-             skipped_invalid_alt_name += 1
-             alt_names_payload = None # Or decide to skip the row entirely
-             # continue # Uncomment this to skip rows with non-string alt names
+            # print(f"Warning: Unexpected type for Alternate Names at iloc index {index + start_row} (Geoname ID: {row.get('Geoname ID', 'N/A')}). Treating as invalid.")
+            skipped_invalid_alt_name += 1
+            alt_names_payload = None
         else:
-             alt_names_payload = alt_names
+            alt_names_payload = alt_names
 
         # --- Payload Preparation ---
         data = {
-            # Use .get with default to prevent KeyError if 'Name' is missing unexpectedly
             'name': row.get('Name'),
             'unaccented_name': row.get('unaccented_name'),
-            'country': row.get('country_id'), # Assumes this is the PB ID
-            # 'state': pb_state_id, # State omitted
-            'latitude': latitude, # Use validated latitude
-            'longitude': longitude, # Use validated longitude
+            'country': row.get('country_id'),
+            'latitude': latitude,
+            'longitude': longitude,
             'population': int(row['Population']) if pd.notna(row['Population']) else None,
-            'alternative_names': alt_names_payload # Use validated/cleaned alt names
-            # 'wikiDataId': Omitted - not available
+            'alternative_names': alt_names_payload
         }
-
-        # Remove None values from payload before sending to PocketBase
         payload = {k: v for k, v in data.items() if v is not None and pd.notna(v)}
 
-        # Check if essential fields are missing after cleaning Nones
+        # Check for essential missing data AFTER cleaning Nones
         if not payload.get('name') or not payload.get('country'):
-            print(f"Skipping row at iloc index {index} (Geoname ID: {row.get('Geoname ID', 'N/A')}) due to missing essential data (name or country_id) after cleaning.")
-            failed_inserts += 1 # Count as failed if essential data is missing
+            # print(f"Skipping row at iloc index {index + start_row} (Geoname ID: {row.get('Geoname ID', 'N/A')}) due to missing essential data (name or country_id).")
+            skipped_missing_data += 1
             continue
 
+        # Add request to the current batch
+        batch_requests.append({
+            "method": "POST",
+            "url": create_record_url,
+            "body": payload,
+        })
 
-        max_retries = 3
-        retry_delay = 1  # seconds
+        # Check if batch is full or if it's the last row *of the current chunk*
+        is_last_row_in_chunk = (i == total_rows_in_chunk - 1) # Corrected check
+        if len(batch_requests) >= batch_size or (is_last_row_in_chunk and batch_requests):
+            print(f"  Sending batch of {len(batch_requests)} requests (Last in chunk: {is_last_row_in_chunk})...")
+            max_retries = 3
+            retry_delay = 2 # seconds
 
-        for attempt in range(max_retries):
-            try:
-                response = requests.post(
-                    f"{BASE_URL}/api/collections/city/records",
-                    headers=headers,
-                    json=payload
-                )
-                response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
-                successful_inserts += 1
-                break # Exit retry loop on success
-            except requests.exceptions.ConnectionError as e:
-                print(f"Warning: Connection error for city '{payload.get('name', 'N/A')}': {e}")
-                if attempt < max_retries - 1:
-                    print(f"Retrying in {retry_delay} seconds...")
-                    time.sleep(retry_delay)
-                    retry_delay *= 2  # Exponential backoff
-                else:
-                    print(f"Error: Failed to insert city '{payload.get('name', 'N/A')}' after {max_retries} attempts due to ConnectionError.")
-                    failed_inserts += 1
-            except requests.exceptions.HTTPError as e:
-                 print(f"Error: HTTP error for city '{payload.get('name', 'N/A')}': {e.response.status_code} {e.response.text}. Payload: {json.dumps(payload, indent=2)}")
-                 failed_inserts += 1
-                 break # Don't retry on HTTP errors like bad data
-            except Exception as e:
-                 print(f"Error: An unexpected error occurred for city '{payload.get('name', 'N/A')}': {e}")
-                 failed_inserts += 1
-                 traceback.print_exc()
-                 break # Don't retry unknown errors
+            for attempt in range(max_retries):
+                try:
+                    response = requests.post(
+                        batch_api_url,
+                        headers=headers,
+                        json={"requests": batch_requests} # Send the list of requests
+                    )
+                    response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
 
-    print(f"Completed inserting/updating cities from row {start_row} to {end_row}.")
-    print(f"  Success: {successful_inserts}")
-    print(f"  Failed: {failed_inserts}")
+                    # Process batch response
+                    results = response.json()
+                    batch_success = 0
+                    batch_failed = 0
+                    for i, result in enumerate(results):
+                        status_code = result.get('status')
+                        if 200 <= status_code < 300:
+                            batch_success += 1
+                        else:
+                            batch_failed += 1
+                            # Log details of the failed request within the batch
+                            failed_request_body = batch_requests[i].get('body', {})
+                            print(f"    ERROR in batch: Status {status_code}, Request Body: {json.dumps(failed_request_body)}, Response: {result.get('data', 'N/A')}")
+
+                    successful_inserts += batch_success
+                    failed_inserts += batch_failed
+                    print(f"  Batch finished: {batch_success} successful, {batch_failed} failed.")
+                    batch_requests = [] # Clear the batch for the next set
+                    break # Exit retry loop on success
+
+                except requests.exceptions.ConnectionError as e:
+                    print(f"  Warning: Connection error sending batch: {e}")
+                    if attempt < max_retries - 1:
+                        print(f"  Retrying batch in {retry_delay} seconds...")
+                        time.sleep(retry_delay)
+                        retry_delay *= 2
+                    else:
+                        print(f"  Error: Failed to send batch after {max_retries} attempts due to ConnectionError.")
+                        failed_inserts += len(batch_requests) # Assume all in the batch failed
+                        batch_requests = [] # Clear failed batch
+                except requests.exceptions.HTTPError as e:
+                    print(f"  Error: HTTP error sending batch: {e.response.status_code} {e.response.text}. Request Body: {json.dumps({'requests': batch_requests[:5]}, indent=2)}...") # Log first few requests
+                    failed_inserts += len(batch_requests) # Assume all in the batch failed
+                    batch_requests = [] # Clear failed batch
+                    break # Don't retry on HTTP errors like bad overall request
+                except Exception as e:
+                    print(f"  Error: An unexpected error occurred sending batch: {e}")
+                    failed_inserts += len(batch_requests) # Assume all failed
+                    batch_requests = [] # Clear failed batch
+                    traceback.print_exc()
+                    break # Don't retry unknown errors
+
+    print(f"Completed batch insertion for rows {start_row} to {end_row}.")
+    print(f"  Total Rows in Chunk Processed (incl. skipped): {total_rows_in_chunk}")
+    print(f"  Successful Inserts: {successful_inserts}")
+    print(f"  Failed Inserts: {failed_inserts}")
     print(f"  Skipped (invalid coords): {skipped_invalid_coord}")
     print(f"  Skipped (invalid alt names): {skipped_invalid_alt_name}")
+    print(f"  Skipped (missing name/country): {skipped_missing_data}")
 
 def insert_deduplicated_geonames_data_all():
-    """Processes the entire deduplicated Geonames file in chunks."""
+    """Processes the entire deduplicated Geonames file in chunks using batch API."""
     input_file = 'data/edit_data/geonames_deduplicated_by_population.csv'
     try:
         df = pd.read_csv(input_file, sep=';')
