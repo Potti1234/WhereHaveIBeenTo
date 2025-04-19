@@ -16,6 +16,7 @@ import { useEffect } from 'react'
 import TripMap from './trip-map'
 import TripChat from './trip-chat'
 import { City } from '@/schemas/city-schema'
+import { errorToast } from '@/lib/toast'
 
 type TripPlannerMode = 'edit' | 'view' | 'create'
 
@@ -169,8 +170,10 @@ export default function TripPlanner (props: {
 
   const handleSaveTrip = () => {
     // validation
-    console.log(trip)
-    console.log(travelItems)
+    if (user === null) {
+      errorToast('You must be logged in to save a trip')
+      return
+    }
 
     // save trip
     if (props.mode === 'edit' && props.trip.id) {

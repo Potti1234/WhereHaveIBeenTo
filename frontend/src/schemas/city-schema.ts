@@ -10,8 +10,9 @@ export const citySchema = z.object({
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   country: pbIdSchema.optional(),
-  state: pbIdSchema.optional(),
+  state: z.union([pbIdSchema, z.literal('')]).optional(),
   wikiDataId: z.string().optional(),
+  population: z.number().optional(),
   created: z.string().optional(),
   updated: z.string().optional()
 })
@@ -25,7 +26,7 @@ export const cityWithCountrySchema = citySchema.extend({
 export const cityWithCountryAndStateSchema = citySchema.extend({
   expand: z.object({
     country: countrySchema,
-    state: stateSchema
+    state: stateSchema.optional().nullable()
   })
 })
 

@@ -106,7 +106,7 @@ export default function CitySelector ({ ...props }: DialogProps) {
                     className='mr-2 h-4 w-4'
                   />
                 )}
-                {`${city.name} / ${city.expand?.state?.name || 'N/A'} / ${
+                {`${city.name} / ${city.expand?.state?.name || ''} ${
                   city.expand?.country?.name || 'N/A'
                 }`}
               </CommandItem>

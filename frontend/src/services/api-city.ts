@@ -23,7 +23,7 @@ export async function getCityWithCountry(cityId: PbId) {
 export async function getCitiesThatStartWith(input: string) {
     const cities = await pb.collection('city').getList(1, 50, {
         filter: `unaccented_name~'${input}%'`,
-        sort: '+unaccented_name',
+        sort: '-population',
         expand: 'country, state'
     })
     return cityWithCountryAndStateListSchema.parse(cities.items)

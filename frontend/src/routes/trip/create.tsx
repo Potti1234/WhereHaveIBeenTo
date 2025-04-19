@@ -1,12 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router'
 import TripPlanner from '@/components/trip/trip-planner'
 import { ExpandedTravelItemType, ExpandedTripType } from '@/schemas/trip-schema'
-
+import useAuth from '@/hooks/use-auth'
 export const Route = createFileRoute('/trip/create')({
   component: RouteComponent
 })
 
 function RouteComponent () {
+  const { user } = useAuth()
+
   const travelItems: ExpandedTravelItemType[] = [
     {
       type: 'bus',
@@ -28,6 +30,7 @@ function RouteComponent () {
     name: '',
     description: '',
     travel_items: [],
+    user: user?.id,
     expand: {
       travel_items: travelItems
     }

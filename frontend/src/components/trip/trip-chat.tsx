@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Send, Loader2 } from 'lucide-react'
 import { createTrip } from '@/services/api-planner'
 import { ExpandedTripType, ExpandedTravelItemType } from '@/schemas/trip-schema'
+import useAuth from '@/hooks/use-auth'
 
 interface TripChatProps {
   setTrip: Dispatch<SetStateAction<ExpandedTripType>>
@@ -17,6 +18,7 @@ export default function TripChat (props: TripChatProps) {
   const [message, setMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const { user } = useAuth()
 
   const adjustTextareaHeight = () => {
     const maxHeight = 350
@@ -35,6 +37,7 @@ export default function TripChat (props: TripChatProps) {
     setIsLoading(true)
     e.preventDefault()
     const trip = await createTrip(message)
+    trip.user = user?.id
     setMessage('')
     setIsLoading(false)
     props.setTrip(trip)

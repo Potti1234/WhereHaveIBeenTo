@@ -7,6 +7,7 @@ import time
 import glob
 import json
 import traceback
+import math
 
 load_dotenv()
 BASE_URL = os.getenv('POCKETBASE_URL')
@@ -619,15 +620,22 @@ def insert_deduplicated_geonames_data(start_row=0, end_row=None):
     # Load deduplicated Geonames data
     input_file = 'data/edit_data/geonames_deduplicated_by_population.csv'
     try:
-        df = pd.read_csv(input_file, sep=';')
+        # Specify dtype for 'Alternate Names' to handle potential large strings or NAs better
+        dtypes = {'Alternate Names': 'object'} # Treat as generic object first
+        df = pd.read_csv(input_file, sep=';', dtype=dtypes, low_memory=False) # low_memory=False can help with mixed types
     except FileNotFoundError:
         print(f"Error: Input file not found: {input_file}")
         return
+    except Exception as e:
+        print(f"Error loading CSV {input_file}: {e}")
+        traceback.print_exc()
+        return
 
     # Prepare needed columns, handle potential missing columns gracefully
-    required_cols = ['Geoname ID', 'ASCII Name', 'Coordinates', 'Population', 'country_id']
+    required_cols = ['Geoname ID', 'Name', 'ASCII Name', 'Coordinates', 'Population', 'country_id', 'Alternate Names']
     if not all(col in df.columns for col in required_cols):
-        print(f"Error: Input file {input_file} is missing required columns. Needed: {required_cols}")
+        missing = [col for col in required_cols if col not in df.columns]
+        print(f"Error: Input file {input_file} is missing required columns: {missing}")
         return
 
     # Prepare unaccented name (use lowercase ASCII Name)
@@ -635,47 +643,84 @@ def insert_deduplicated_geonames_data(start_row=0, end_row=None):
 
     # Extract lat/lon
     try:
-        coords = df['Coordinates'].str.split(',', expand=True)
-        df['latitude'] = pd.to_numeric(coords[0], errors='coerce')
-        df['longitude'] = pd.to_numeric(coords[1], errors='coerce')
+        # Handle potential errors during split more robustly
+        coords = df['Coordinates'].astype(str).str.split(',', expand=True)
+        if coords.shape[1] >= 2: # Ensure we have at least two columns after split
+            df['latitude'] = pd.to_numeric(coords[0], errors='coerce')
+            df['longitude'] = pd.to_numeric(coords[1], errors='coerce')
+        else:
+            print("Warning: Coordinate column split did not produce two columns for some rows.")
+            df['latitude'] = pd.NA # Assign pandas NA for consistency
+            df['longitude'] = pd.NA
     except Exception as e:
         print(f"Error parsing Coordinates column: {e}")
-        # Decide how to handle: drop rows with bad coords or try to continue?
-        df.dropna(subset=['Coordinates'], inplace=True) # Drop rows with totally missing coords
-        coords = df['Coordinates'].str.split(',', expand=True)
-        df['latitude'] = pd.to_numeric(coords[0], errors='coerce')
-        df['longitude'] = pd.to_numeric(coords[1], errors='coerce')
-
-    # Drop rows where lat/lon parsing failed
-    rows_before_drop = len(df)
-    df.dropna(subset=['latitude', 'longitude'], inplace=True)
-    if len(df) < rows_before_drop:
-        print(f"Dropped {rows_before_drop - len(df)} rows due to invalid coordinates.")
+        # Fallback to NA if parsing fails
+        df['latitude'] = pd.NA
+        df['longitude'] = pd.NA
 
     # --- Row Slicing for Chunking ---
+    # Note: iloc slices by position, independent of the actual index labels
     if end_row is None:
         end_row = len(df)
-    # Ensure slicing respects DataFrame index after potential drops
     df_to_process = df.iloc[start_row:end_row]
 
-    # --- API Insertion --- 
+    # --- API Insertion ---
     print(f"Starting insertion for rows {start_row} to {end_row}...")
     successful_inserts = 0
     failed_inserts = 0
+    skipped_invalid_coord = 0
+    skipped_invalid_alt_name = 0
+
     for index, row in df_to_process.iterrows():
+        # --- Coordinate Validation ---
+        latitude = row['latitude']
+        longitude = row['longitude']
+
+        # Use pandas.isna() for robust NA check (covers None, NaN, pd.NA)
+        if pd.isna(latitude) or pd.isna(longitude) or \
+           (isinstance(latitude, float) and (math.isnan(latitude) or math.isinf(latitude))) or \
+           (isinstance(longitude, float) and (math.isnan(longitude) or math.isinf(longitude))):
+            print(f"Skipping row at iloc index {index} (Geoname ID: {row.get('Geoname ID', 'N/A')}) due to invalid coordinates: lat={latitude}, lon={longitude}")
+            skipped_invalid_coord += 1
+            continue # Skip this row
+
+        # --- Alternate Names Validation ---
+        alt_names = row['Alternate Names']
+        # Check if alt_names is NaN or None, replace with None for JSON compatibility
+        if pd.isna(alt_names):
+            alt_names_payload = None
+        # Optional: Check if it's a valid string (if it's not NaN)
+        elif not isinstance(alt_names, str):
+             print(f"Warning: Unexpected type for Alternate Names in row at iloc index {index} (Geoname ID: {row.get('Geoname ID', 'N/A')}). Type: {type(alt_names)}. Value: {alt_names}. Treating as invalid.")
+             skipped_invalid_alt_name += 1
+             alt_names_payload = None # Or decide to skip the row entirely
+             # continue # Uncomment this to skip rows with non-string alt names
+        else:
+             alt_names_payload = alt_names
+
+        # --- Payload Preparation ---
         data = {
-            'name': row['Name'],
-            'unaccented_name': row['unaccented_name'],
-            'country': row['country_id'], # Assumes this is the PB ID
+            # Use .get with default to prevent KeyError if 'Name' is missing unexpectedly
+            'name': row.get('Name'),
+            'unaccented_name': row.get('unaccented_name'),
+            'country': row.get('country_id'), # Assumes this is the PB ID
             # 'state': pb_state_id, # State omitted
-            'latitude': row['latitude'],
-            'longitude': row['longitude'],
-            'population': int(row['Population']) if pd.notna(row['Population']) else None
+            'latitude': latitude, # Use validated latitude
+            'longitude': longitude, # Use validated longitude
+            'population': int(row['Population']) if pd.notna(row['Population']) else None,
+            'alternative_names': alt_names_payload # Use validated/cleaned alt names
             # 'wikiDataId': Omitted - not available
         }
 
-        # Remove None values from payload, PocketBase might prefer fields omitted
-        payload = {k: v for k, v in data.items() if v is not None}
+        # Remove None values from payload before sending to PocketBase
+        payload = {k: v for k, v in data.items() if v is not None and pd.notna(v)}
+
+        # Check if essential fields are missing after cleaning Nones
+        if not payload.get('name') or not payload.get('country'):
+            print(f"Skipping row at iloc index {index} (Geoname ID: {row.get('Geoname ID', 'N/A')}) due to missing essential data (name or country_id) after cleaning.")
+            failed_inserts += 1 # Count as failed if essential data is missing
+            continue
+
 
         max_retries = 3
         retry_delay = 1  # seconds
@@ -691,25 +736,29 @@ def insert_deduplicated_geonames_data(start_row=0, end_row=None):
                 successful_inserts += 1
                 break # Exit retry loop on success
             except requests.exceptions.ConnectionError as e:
-                print(f"Warning: Connection error for city '{data['name']}': {e}")
+                print(f"Warning: Connection error for city '{payload.get('name', 'N/A')}': {e}")
                 if attempt < max_retries - 1:
                     print(f"Retrying in {retry_delay} seconds...")
                     time.sleep(retry_delay)
                     retry_delay *= 2  # Exponential backoff
                 else:
-                    print(f"Error: Failed to insert city '{data['name']}' after {max_retries} attempts due to ConnectionError.")
+                    print(f"Error: Failed to insert city '{payload.get('name', 'N/A')}' after {max_retries} attempts due to ConnectionError.")
                     failed_inserts += 1
             except requests.exceptions.HTTPError as e:
-                 print(f"Error: HTTP error for city '{data['name']}': {e.response.status_code} {e.response.text}")
+                 print(f"Error: HTTP error for city '{payload.get('name', 'N/A')}': {e.response.status_code} {e.response.text}. Payload: {json.dumps(payload, indent=2)}")
                  failed_inserts += 1
                  break # Don't retry on HTTP errors like bad data
             except Exception as e:
-                 print(f"Error: An unexpected error occurred for city '{data['name']}': {e}")
+                 print(f"Error: An unexpected error occurred for city '{payload.get('name', 'N/A')}': {e}")
                  failed_inserts += 1
                  traceback.print_exc()
                  break # Don't retry unknown errors
 
-    print(f"Completed inserting/updating cities from row {start_row} to {end_row}. Success: {successful_inserts}, Failed: {failed_inserts}")
+    print(f"Completed inserting/updating cities from row {start_row} to {end_row}.")
+    print(f"  Success: {successful_inserts}")
+    print(f"  Failed: {failed_inserts}")
+    print(f"  Skipped (invalid coords): {skipped_invalid_coord}")
+    print(f"  Skipped (invalid alt names): {skipped_invalid_alt_name}")
 
 def insert_deduplicated_geonames_data_all():
     """Processes the entire deduplicated Geonames file in chunks."""
