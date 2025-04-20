@@ -14,12 +14,11 @@ export default function NotFoundPage () {
 
   return (
     <main className='flex flex-col items-center gap-y-4 text-center'>
-      <div className='mt-4 space-y-2 text-4xl font-bold sm:text-5xl'>
-        This page does not exist
-      </div>
-      <p className='text-lg font-light sm:text-xl'>
-        Sorry, we could not find the page you are looking for
-      </p>
+      <img
+        src='/images/CitiesbeenNotFound.png'
+        alt='Page Not Found'
+        className='mt-8 max-w-sm'
+      />
       <Button
         variant='link'
         className='w-32 hover:no-underline'
