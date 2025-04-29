@@ -1,0 +1,53 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rule Name: FrontendStructure
+Applies To: frontend/src/
+Description: Describes the standard structure, patterns, and conventions used within the frontend codebase.
+
+**1. Directory Structure:**
+- `assets/`: Static assets like images, fonts.
+- `components/`: Reusable React components.
+  - `ui/`: Base UI components managed by shadcn/ui (added via CLI).
+  - `shared/`: Common components shared across multiple features.
+  - `[feature]/`: Components specific to a particular feature/domain.
+- `context/`: React Context providers and associated hooks.
+- `hooks/`: Custom React hooks, often wrapping data fetching or business logic.
+  - Typically named `use-[resource].ts` (e.g., `use-city.ts`).
+- `lib/`: Utility functions, constants, and helper modules.
+  - `utils.ts`: General utility functions, including `cn` for Tailwind class merging.
+  - `toast.ts`: Functions for displaying notifications (likely using `sonner`).
+- `routes/`: File-based routing configuration for TanStack Router.
+  - `__root.tsx`: Defines the root layout component.
+  - `index.tsx`: Component for the `/` route.
+  - `[name].tsx`: Component for a specific top-level route (e.g., `/privacypolicy`).
+  - `[directory]/`: Defines nested routes (e.g., `auth/login.tsx` for `/auth/login`).
+  - `_layout.tsx` (Convention): Defines layout components specific to a route segment.
+  - `$.tsx` or `not-found.tsx`: Catch-all or 404 routes.
+- `schemas/`: Zod schema definitions for data validation and type inference.
+  - Named `[resource]-schema.ts` (e.g., `city-schema.ts`).
+  - Define schemas for PocketBase collections and expected API responses, including `expand` structures.
+  - Export TypeScript types inferred from schemas (`z.infer<typeof schema>`).
+- `services/`: API interaction layer.
+  - `pocketbase.ts`: Initializes and exports the typed PocketBase JS client instance (`pb`).
+  - `api-[resource].ts` (e.g., `api-city.ts`): Contains functions for specific API endpoints/collections.
+    - Functions typically fetch data using `pb`, parse responses with Zod schemas, and handle errors.
+    - Often export TanStack Query `queryOptions` for direct use in hooks.
+- `types/`: Global TypeScript type definitions.
+  - `pocketbase-types.ts`: **Auto-generated** by `npm run typegen` from the backend DB schema. **Do not edit manually.**
+- `main.tsx`: Application entry point, initializes React, sets up the Router, QueryClientProvider, etc.
+- `routeTree.gen.ts`: **Auto-generated** by TanStack Router CLI/plugin. **Do not edit manually.**
+
+**2. Key Patterns & Conventions:**
+- **Routing:** Uses TanStack Router with file-based routing. Routes are defined in `src/routes/`. Use the `<Link>` component for internal navigation. Type safety is enhanced by the generated `routeTree.gen.ts`.
+- **Data Fetching & State:** Uses TanStack Query (`@tanstack/react-query`) for server state management.
+  - API calls are defined in `src/services/api-*.ts` files, often exporting `queryOptions`.
+  - Custom hooks in `src/hooks/use-*.ts` typically wrap `useQuery` / `useSuspenseQuery` / `useMutation` using the exported `queryOptions` or API functions.
+  - Hooks often handle loading states (implicitly via Suspense or explicitly) and errors (e.g., showing toasts).
+- **Type Safety:** Emphasized through TypeScript, Zod schemas (`src/schemas/`), and generated types (`src/types/pocketbase-types.ts`, `src/routeTree.gen.ts`). Always parse API responses with Zod schemas in service functions.
+- **Component Model:** Follows standard React functional components. Uses shadcn/ui components (`src/components/ui`) built upon Radix UI, styled with Tailwind CSS. Custom application components are built compositionally.
+- **Styling:** Uses Tailwind CSS utility classes. The `cn` utility from `src/lib/utils.ts` is used for conditional/merged classes.
+- **Forms:** Uses React Hook Form (`react-hook-form`) integrated with Zod schemas for validation.
+

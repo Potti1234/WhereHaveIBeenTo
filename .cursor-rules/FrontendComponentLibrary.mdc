@@ -1,0 +1,14 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rule Name: FrontendComponentLibrary
+Applies To: frontend/components.json, frontend/src/components/, frontend/lib/utils.ts
+Description: The frontend uses shadcn/ui for managing UI components, configured via `frontend/components.json` ("new-york" style, `lucide` icons). 
+- **Base Components:** Components added via the shadcn/ui CLI reside in `frontend/src/components/ui`. 
+- **Adding Components:** Use the shadcn-ui CLI (e.g., `npx shadcn-ui@latest add button`) to add new UI primitives to maintain consistency.
+- **Custom Components:** Application-specific components built using these primitives should be placed in `frontend/src/components/` (or subdirectories thereof).
+- **Utility Functions:** shadcn/ui relies on utility functions (like `cn` for merging class names) located in `frontend/src/lib/utils.ts` as configured in `components.json`.
+- **Path Aliases:** Path aliases (`@/components`, `@/lib`, etc.) are defined in `components.json` and configured in `tsconfig.json` and `vite.config.ts`.
+

@@ -1,0 +1,25 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Rule Name: FrontendFramework
+Applies To: frontend/
+Description: The frontend is built using TypeScript, Vite, React (likely, inferred from typical Vite setups), and Tailwind CSS for styling. Components might be managed via `components.json` (possibly shadcn/ui). State management or specific architectural patterns aren't immediately obvious but could be added later.
+
+Rule Name: BackendFramework
+Applies To: backend/
+Description: The backend is a Go application. It appears to use PocketBase as a backend framework/database (inferred from `pb_data` and `migrations`), providing APIs and data persistence. Key Go files include `main.go`, `auth.go`, `currency.go`, `aiplanner.go`.
+
+Rule Name: DeploymentContainerization
+Applies To: ./Dockerfile, ./docker-compose.yml
+Description: The application is containerized using Docker. The `Dockerfile` likely builds the Go backend, and `docker-compose.yml` orchestrates the backend, frontend (possibly served via a static server or the backend), and any other services (like PocketBase itself if not embedded).
+
+Rule Name: BackendDevelopmentEnvironment
+Applies To: backend/.air.toml
+Description: The backend development environment uses `air` for live reloading (`.air.toml` configuration file exists). Run `air` in the `backend` directory for development.
+
+Rule Name: FrontendComponentLibrary
+Applies To: frontend/components.json, frontend/src/components/ (assumption)
+Description: The frontend likely uses shadcn/ui or a similar system for managing UI components, configured via `components.json`. New components should ideally be added using the associated CLI tool if applicable.
+

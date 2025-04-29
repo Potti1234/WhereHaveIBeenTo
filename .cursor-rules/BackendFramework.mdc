@@ -1,0 +1,20 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rule Name: BackendFramework
+Applies To: backend/
+Description: The backend is a Go application built using the PocketBase v0.27.0 framework.
+- **Core:** Uses `github.com/pocketbase/pocketbase` for its core functionality (web server, database (SQLite), auth, real-time subscriptions).
+- **Database:** Leverages PocketBase's embedded SQLite database and its query builder (`github.com/pocketbase/dbx`).
+- **Entry Point:** `backend/main.go` initializes the PocketBase app, registers migrations, mounts filesystems (likely frontend), and sets up custom hooks/routes.
+- **Migrations:** Database schema changes are managed via migration files located in `backend/migrations/`. Auto-migration generation is enabled during development (`go run`). Use `go run . migrate` for manual migration commands.
+- **Key Modules:** 
+    - `auth.go`: Contains hooks or handlers related to PocketBase authentication.
+    - `currency.go`: Implements currency data handling/updating logic.
+    - `aiplanner.go`: Integrates with Google Generative AI (`github.com/google/generative-ai-go`) for planning features.
+    - `fs*.go`: Logic for mounting/serving filesystem content (likely the frontend build).
+- **Dependencies:** Managed via Go modules (`go.mod`, `go.sum`).
+- **Environment Variables:** Uses `github.com/joho/godotenv` potentially loaded in `main.go` to manage environment variables during development.
+

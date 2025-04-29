@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rule Name: BackendDevelopmentEnvironment
+Applies To: backend/.air.toml
+Description: The backend development environment uses `air` (configured via `.air.toml`) for live reloading.
+- **Usage:** Run `air` in the `backend` directory to start the development server.
+- **Process:** `air` monitors Go source files (`.go`) and template files (`.tpl`, `.tmpl`, `.html`) for changes.
+- **Workflow:** 
+    1. On change detection, `air` runs `go build -o ./tmp/main.exe .`.
+    2. It then executes the compiled binary: `tmp/main.exe serve`.
+- **Exclusions:** Directories like `tmp`, `vendor`, `pb_data`, and `*_test.go` files are ignored.
+- **Configuration:** See `.air.toml` for details on build delays, watched extensions, excluded paths, and colour/log settings.
+

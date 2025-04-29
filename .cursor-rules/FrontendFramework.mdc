@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rule Name: FrontendFramework
+Applies To: frontend/
+Description: The frontend is built using TypeScript and React with Vite as the build tool. Key libraries include:
+- **Routing:** TanStack Router (`@tanstack/react-router`)
+- **Data Fetching/Server State:** TanStack Query (`@tanstack/react-query`) interacting with the PocketBase backend via its JS client.
+- **UI Components:** shadcn/ui built on Radix UI (see `FrontendComponentLibrary.mdc`).
+- **Styling:** Tailwind CSS.
+- **Forms:** React Hook Form (`react-hook-form`) with Zod (`zod`) for validation.
+- **Maps:** Leaflet (`leaflet`, `react-leaflet`).
+- **Icons:** Lucide Icons (`lucide-react`).
+- **Type Generation:** A script (`npm run typegen`) uses `pocketbase-typegen` to create TypeScript types from the backend schema (`../backend/pb_data/data.db`) into `frontend/src/types/pocketbase-types.ts`.
+
+Configuration files:
+- `frontend/package.json`: Dependencies and scripts.
+- `frontend/vite.config.ts`: Vite build/dev server settings.
+- `frontend/tailwind.config.js`: Tailwind theme/plugin customization.
+- `frontend/tsconfig.json`: TypeScript compiler options.
+- `frontend/components.json`: shadcn/ui configuration and path aliases.
+

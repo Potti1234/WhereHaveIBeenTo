@@ -1,0 +1,22 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Rule Name: DeploymentContainerization
+Applies To: ./Dockerfile, ./docker-compose.yml
+Description: The application is containerized using Docker for deployment.
+- **Dockerfile:** Defines a multi-stage build process:
+    1. **Node Builder:** Uses `node:20-alpine` to install dependencies (`npm ci`) and build the static frontend assets (`npm run build:client`). Build-time args `DOMAIN_NAME` and `PLAUSIBLE_API_HOST` are baked into the frontend build via a temporary `.env` file.
+    2. **Go Builder:** Uses `golang:1.23-alpine`, copies backend code and built frontend assets (`dist/`), downloads Go modules, and compiles the production Go binary (`go build -tags production -o citiesbeen`).
+    3. **Runner:** Uses `alpine:latest`, copies only the compiled Go binary and creates the `pb_data` directory. The Go binary serves both the API and the static frontend files.
+- **docker-compose.yml:** Orchestrates the application stack:
+    - Defines a single service: `citiesbeen`.
+    - Builds the image using the `Dockerfile`.
+    - Passes build arguments (`DOMAIN_NAME`, `PLAUSIBLE_API_HOST`) from the host environment during the image build.
+    - Passes runtime environment variables (`POCKETBASE_ADMIN_EMAIL`, `POCKETBASE_ADMIN_PASSWORD`, `POCKETBASE_URL`, `EXCHANGE_RATE_API_KEY`) from the host environment to the running container.
+    - Maps host port 8090 to container port 8090.
+    - Mounts `./citiesbeen/pb_data` on the host to `/app/pb_data` in the container for persistent PocketBase data.
+    - Includes a healthcheck that polls the `/api/health` endpoint.
+- **Execution:** The final container runs the command `/app/citiesbeen serve --http=0.0.0.0:8090`.
+
