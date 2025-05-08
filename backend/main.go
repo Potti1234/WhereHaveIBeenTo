@@ -10,6 +10,8 @@ import (
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 
 	_ "pocketbasego/migrations"
+
+	viator "pocketbasego/api-providers/viator"
 )
 
 type application struct {
@@ -40,6 +42,7 @@ func main() {
 
 	app.InitCurrencyUpdater()
 	app.InitAIPlanner()
+	viator.InitActivityEndpoints(app.pb)
 
 	if err := app.pb.Start(); err != nil {
 		log.Fatal(err)
