@@ -7,7 +7,7 @@ import {
   deleteTrip as deleteTripApi
 } from '@/services/api-trip'
 import { errorToast, successToast } from '@/lib/toast'
-import type { TravelItemType, ExpandedTripType } from '@/schemas/trip-schema'
+import type { TravelItemType, ExpandedTripType, TripDayType } from '@/schemas/trip-schema'
 
 export function useTrip(tripId?: string) {
   const queryClient = useQueryClient()
@@ -19,11 +19,13 @@ export function useTrip(tripId?: string) {
   const createTripMutation = useMutation({
     mutationFn: ({
       trip,
-      travelItems
+      travelItems,
+      tripDays
     }: {
       trip: ExpandedTripType
       travelItems: TravelItemType[]
-    }) => createTripApi(trip, travelItems),
+      tripDays: TripDayType[]
+    }) => createTripApi(trip, travelItems, tripDays),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trip'] })
       successToast('Trip created successfully')
@@ -38,12 +40,14 @@ export function useTrip(tripId?: string) {
     mutationFn: ({
       id,
       trip,
-      travelItems
+      travelItems,
+      tripDays
     }: {
       id: string
       trip: ExpandedTripType
       travelItems: TravelItemType[]
-    }) => updateTripApi(id, trip, travelItems),
+      tripDays: TripDayType[]
+    }) => updateTripApi(id, trip, travelItems, tripDays),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trip'] })
       successToast('Trip updated successfully')

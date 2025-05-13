@@ -3,7 +3,8 @@ import { TripList } from '@/components/trip/trip-list'
 import type {
   TravelItemType,
   ExpandedTripType,
-  ExpandedTravelItemType
+  ExpandedTravelItemType,
+  TripDayType
 } from '@/schemas/trip-schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,10 +32,12 @@ export default function TripPlanner (props: {
     description: '',
     user: user?.id,
     expand: {
-      travel_items: []
+      travel_items: [],
+      trip_days: []
     }
   })
   const [travelItems, setTravelItems] = useState<ExpandedTravelItemType[]>([])
+  const [tripDays, setTripDays] = useState<TripDayType[]>([])
 
   const { createTrip, updateTrip } = useTrip()
 
@@ -180,12 +183,14 @@ export default function TripPlanner (props: {
       updateTrip({
         id: props.trip.id,
         trip,
-        travelItems
+        travelItems,
+        tripDays
       })
     } else {
       createTrip({
         trip,
-        travelItems
+        travelItems,
+        tripDays
       })
     }
   }

@@ -21,7 +21,17 @@ export const tripSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   travel_items: z.array(pbIdSchema).optional(),
+  trip_days: z.array(pbIdSchema).optional(),
   user: pbIdSchema.optional(),
+  created: z.string().optional(),
+  updated: z.string().optional()
+})
+
+export const tripDaySchema = z.object({
+  id: pbIdSchema.optional(),
+  day: z.number(),
+  description: z.string(),
+  trip: pbIdSchema.optional(),
   created: z.string().optional(),
   updated: z.string().optional()
 })
@@ -30,6 +40,7 @@ export const tripListSchema = z.array(tripSchema)
 
 export type TripType = z.infer<typeof tripSchema>
 export type TravelItemType = z.infer<typeof travelItemSchema>
+export type TripDayType = z.infer<typeof tripDaySchema>
 
 export const tripSchemaTravelItemExpandedSchema = tripSchema.extend({
   expand: z.object({
@@ -52,7 +63,8 @@ export type ExpandedTravelItemType = z.infer<
 
 export const tripSchemaTravelItemAndCityFromToExpandedSchema = tripSchema.extend({
   expand: z.object({
-    travel_items: z.array(travelItemSchemaExpandCityFromToSchema)
+    travel_items: z.array(travelItemSchemaExpandCityFromToSchema).optional(),
+    trip_days: z.array(tripDaySchema).optional()
   })
 })
 

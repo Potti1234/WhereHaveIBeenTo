@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import pb from './pocketbase'
-import { tripSchema, type TripType, type TravelItemType, tripSchemaTravelItemAndCityFromToExpandedSchema, tripSchemaTravelItemAndCityFromToExpandedListSchema} from '@/schemas/trip-schema'
+import { tripSchema, type TripType, type TravelItemType, tripSchemaTravelItemAndCityFromToExpandedSchema, tripSchemaTravelItemAndCityFromToExpandedListSchema, type TripDayType } from '@/schemas/trip-schema'
 import { PbId } from '@/schemas/pb-schema'
 
 interface ExpandObject {
@@ -19,7 +19,7 @@ export async function getTrip(tripId: PbId) {
     return null
   }
   const trip = await pb.collection('trip').getOne(tripId, {
-    expand: 'travel_items,travel_items.from,travel_items.to'
+    expand: 'travel_items,travel_items.from,travel_items.to,trip_days'
   }) as TripType & ExpandObject
 
   // Filter out travel items with missing city data
@@ -28,14 +28,13 @@ export async function getTrip(tripId: PbId) {
       item.expand?.from && item.expand?.to
     )
   }
-
   return tripSchemaTravelItemAndCityFromToExpandedSchema.parse(trip)
 }
 
 export async function getTrips() {
   const trips = await pb.collection('trip').getFullList({
     sort: '-created',
-    expand: 'travel_items,travel_items.from,travel_items.to'
+    expand: 'travel_items,travel_items.from,travel_items.to, trip_days'
   }) as Array<TripType & ExpandObject>
 
   // Filter out travel items with missing city data for each trip
@@ -50,7 +49,7 @@ export async function getTrips() {
   return tripSchemaTravelItemAndCityFromToExpandedListSchema.parse(trips)
 }
 
-export async function createTrip(trip: TripType, travelItems: TravelItemType[]) {
+export async function createTrip(trip: TripType, travelItems: TravelItemType[], tripDays: TripDayType[]) {
   const newTrip = await pb.collection('trip').create(trip)
   
   // Create travel items with references to the new trip
@@ -65,17 +64,30 @@ export async function createTrip(trip: TripType, travelItems: TravelItemType[]) 
     )
   )
 
+  // Create trip days with references to the new trip
+  const createdTripDays = await Promise.all(
+    tripDays.map((day) => 
+      pb.collection('trip_day').create({
+        ...day,
+        trip: newTrip.id
+      })
+    )
+  )
+
+  // Update the trip with the created travel items and trip days
   await pb.collection('trip').update(newTrip.id, {
-    travel_items: createdTravelItems.map(item => item.id)
+    travel_items: createdTravelItems.map(item => item.id),
+    trip_days: createdTripDays.map(day => day.id)
   })
 
   return {
     ...tripSchema.parse(newTrip),
-    travel_items: createdTravelItems
+    travel_items: createdTravelItems,
+    trip_days: createdTripDays
   }
 }
 
-export async function updateTrip(tripId: PbId, trip: TripType, travelItems: TravelItemType[]) {
+export async function updateTrip(tripId: PbId, trip: TripType, travelItems: TravelItemType[], tripDays: TripDayType[]) {
   const updatedTrip = await pb.collection('trip').update(tripId, trip)
   
   // Delete existing travel items
@@ -84,6 +96,14 @@ export async function updateTrip(tripId: PbId, trip: TripType, travelItems: Trav
   })
   await Promise.all(existingItems.map(item => 
     pb.collection('travel_item').delete(item.id)
+  ))
+
+  // Delete existing trip days
+  const existingDays = await pb.collection('trip_day').getFullList({
+    filter: `trip = "${tripId}"`
+  })
+  await Promise.all(existingDays.map(day => 
+    pb.collection('trip_day').delete(day.id)
   ))
 
   // Create new travel items
@@ -98,13 +118,25 @@ export async function updateTrip(tripId: PbId, trip: TripType, travelItems: Trav
     )
   )
 
+  // Create new trip days
+  const createdTripDays = await Promise.all(
+    tripDays.map((day) => 
+      pb.collection('trip_day').create({
+        ...day,
+        trip: tripId
+      })
+    )
+  )
+
   await pb.collection('trip').update(tripId, {
-    travel_items: createdTravelItems.map(item => item.id)
+    travel_items: createdTravelItems.map(item => item.id),
+    trip_days: createdTripDays.map(day => day.id)
   })
 
   return {
     ...tripSchema.parse(updatedTrip),
-    travel_items: createdTravelItems
+    travel_items: createdTravelItems,
+    trip_days: createdTripDays
   }
 }
 
@@ -115,6 +147,14 @@ export async function deleteTrip(tripId: PbId) {
   })
   await Promise.all(travelItems.map(item => 
     pb.collection('travel_item').delete(item.id)
+  ))
+
+  // Delete associated trip days
+  const tripDays = await pb.collection('trip_day').getFullList({
+    filter: `trip = "${tripId}"`
+  })
+  await Promise.all(tripDays.map(day =>
+    pb.collection('trip_day').delete(day.id)
   ))
   
   await pb.collection('trip').delete(tripId)
