@@ -2,6 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import TripPlanner from '@/components/trip/trip-planner'
 import { ExpandedTravelItemType, ExpandedTripType } from '@/schemas/trip-schema'
 import useAuth from '@/hooks/use-auth'
+import TravelEditor from '@/components/editor/travel-editor'
+
 export const Route = createFileRoute('/trip/create')({
   component: RouteComponent
 })
@@ -35,5 +37,6 @@ function RouteComponent () {
       travel_items: travelItems
     }
   }
-  return <TripPlanner mode='create' trip={trip} travelItems={travelItems} />
+  return <TravelEditor />
+  //return <TripPlanner mode='create' trip={trip} travelItems={travelItems} />
 }
