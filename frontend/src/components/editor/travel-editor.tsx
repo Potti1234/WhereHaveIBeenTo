@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import TextAlign from '@tiptap/extension-text-align'
@@ -11,6 +11,7 @@ import FlightExtension from './extensions/flight-extension'
 import HotelExtension from './extensions/hotel-extension'
 import ActivityExtension from './extensions/activity-extension'
 import MapExtension from './extensions/map-extension'
+import { SlashCommand } from './extensions/slash-command-extension'
 
 interface FlightAttributes {
   id: number
@@ -53,17 +54,29 @@ export default function TravelEditor () {
   const [showHotelSearch, setShowHotelSearch] = useState(false)
   const [showActivitySearch, setShowActivitySearch] = useState(false)
 
+  const commandActions = {
+    addFlight: () => setShowFlightSearch(true),
+    addHotel: () => setShowHotelSearch(true),
+    addActivity: () => setShowActivitySearch(true),
+    addMap: () => {
+      editor?.commands.insertContent({
+        type: 'mapBlock',
+        attrs: {}
+      })
+    }
+  }
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        history: false // Disable built-in history as we're using the extension
+        history: false
       }),
       History.configure({
         depth: 100,
         newGroupDelay: 500
       }),
       Placeholder.configure({
-        placeholder: 'Start planning your trip...'
+        placeholder: 'Type / for commands or start planning your trip...'
       }),
       TextAlign.configure({
         types: ['heading', 'paragraph']
@@ -71,62 +84,70 @@ export default function TravelEditor () {
       FlightExtension,
       HotelExtension,
       ActivityExtension,
-      MapExtension
+      MapExtension,
+      SlashCommand.configure({
+        commandActions
+      })
     ],
     content: `
       <h1>Start Planning Your Trip</h1>
-      <p>Use the toolbar above to add flights, hotels, activities, and more to your travel plan.</p>
+      <p>Use the toolbar above or type <strong>/</strong> to add flights, hotels, activities, and more to your travel plan.</p>
     `,
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm sm:prose lg:prose-lg xl:prose-xl mx-auto focus:outline-none min-h-[calc(100vh-56px)] p-4'
+          'prose prose-neutral dark:prose-invert prose-sm sm:prose-base lg:prose-lg xl:prose-xl max-w-none focus:outline-none p-4 overflow-y-auto h-full w-full'
       }
     }
-  })
+  }) as Editor
 
   const insertFlight = (flight: FlightAttributes) => {
-    editor?.commands.insertContent({
-      type: 'flightBlock',
-      attrs: flight
-    })
+    editor
+      ?.chain()
+      .focus()
+      .insertContent({
+        type: 'flightBlock',
+        attrs: flight
+      })
+      .run()
     setShowFlightSearch(false)
   }
 
   const insertHotel = (hotel: HotelAttributes) => {
-    editor?.commands.insertContent({
-      type: 'hotelBlock',
-      attrs: hotel
-    })
+    editor
+      ?.chain()
+      .focus()
+      .insertContent({
+        type: 'hotelBlock',
+        attrs: hotel
+      })
+      .run()
     setShowHotelSearch(false)
   }
 
   const insertActivity = (activity: ActivityAttributes) => {
-    editor?.commands.insertContent({
-      type: 'activityBlock',
-      attrs: activity
-    })
+    editor
+      ?.chain()
+      .focus()
+      .insertContent({
+        type: 'activityBlock',
+        attrs: activity
+      })
+      .run()
     setShowActivitySearch(false)
   }
 
-  const insertMap = () => {
-    editor?.commands.insertContent({
-      type: 'mapBlock',
-      attrs: {}
-    })
-  }
-
   return (
-    <div className='flex flex-col h-screen'>
+    <div className='container mx-auto p-4 space-y-6 h-screen flex flex-col'>
       <EditorToolbar
         editor={editor}
         onFlightClick={() => setShowFlightSearch(true)}
         onHotelClick={() => setShowHotelSearch(true)}
         onActivityClick={() => setShowActivitySearch(true)}
-        onMapClick={insertMap}
+        onMapClick={commandActions.addMap}
       />
 
-      <div className='flex-1 overflow-auto'>
+      <div className='flex-1 overflow-y-auto relative min-h-0'>
         <EditorContent editor={editor} className='h-full' />
       </div>
 
@@ -155,7 +176,6 @@ export default function TravelEditor () {
 }
 
 function FlightSearch ({ onSelect, onClose }: SearchProps<FlightAttributes>) {
-  // Dummy flight data
   const flights: FlightAttributes[] = [
     {
       id: 1,
@@ -290,7 +310,6 @@ function FlightSearch ({ onSelect, onClose }: SearchProps<FlightAttributes>) {
 }
 
 function HotelSearch ({ onSelect, onClose }: SearchProps<HotelAttributes>) {
-  // Dummy hotel data
   const hotels: HotelAttributes[] = [
     {
       id: 1,
@@ -392,7 +411,6 @@ function ActivitySearch ({
   onSelect,
   onClose
 }: SearchProps<ActivityAttributes>) {
-  // Dummy activity data
   const activities: ActivityAttributes[] = [
     {
       id: 1,
