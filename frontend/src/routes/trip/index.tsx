@@ -1,12 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from '@tanstack/react-router'
 import { TripCard } from '@/components/trip/trip-card'
 import { useTrip } from '@/hooks/use-trip'
 import { Heart } from 'lucide-react'
+import { checkUserIsLoggedIn } from '@/services/api-auth'
 
 export const Route = createFileRoute('/trip/')({
-  component: TripOverview
+  component: TripOverview,
+  beforeLoad: () => {
+    if (!checkUserIsLoggedIn()) throw redirect({ to: '/auth/login' })
+    return { getTitle: () => 'All Trips' }
+  }
 })
 
 function TripOverview () {
