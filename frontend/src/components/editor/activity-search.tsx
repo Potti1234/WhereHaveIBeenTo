@@ -1,11 +1,30 @@
 import { ActivityAttributes } from './types'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent } from '@/components/ui/card'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface SearchProps {
   onSelect: (item: ActivityAttributes) => void
   onClose: () => void
+  open: boolean
 }
 
-export default function ActivitySearch ({ onSelect, onClose }: SearchProps) {
+export default function ActivitySearch ({
+  onSelect,
+  onClose,
+  open
+}: SearchProps) {
+  const handleOpenChange = (openState: boolean) => {
+    if (!openState) onClose()
+  }
+
   const activities: ActivityAttributes[] = [
     {
       id: 1,
@@ -37,76 +56,61 @@ export default function ActivitySearch ({ onSelect, onClose }: SearchProps) {
   ]
 
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-      <div className='bg-white rounded-lg w-full max-w-2xl p-6'>
-        <div className='flex justify-between items-center mb-4'>
-          <h3 className='text-xl font-bold'>Search Activities</h3>
-          <button
-            onClick={onClose}
-            className='text-gray-500 hover:text-gray-700'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-6 w-6'
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M6 18L18 6M6 6l12 12'
-              />
-            </svg>
-          </button>
-        </div>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className='max-w-2xl'>
+        <DialogHeader>
+          <DialogTitle>Search Activities</DialogTitle>
+        </DialogHeader>
 
-        <div className='mb-4 grid grid-cols-4 gap-2'>
-          <input
+        <div className='grid grid-cols-4 gap-2 mb-4'>
+          <Input
             type='text'
             placeholder='Location'
-            className='p-2 border rounded col-span-2'
             defaultValue='Tokyo'
+            className='col-span-2'
           />
-          <input
-            type='text'
-            placeholder='Activity type'
-            className='p-2 border rounded'
-          />
-          <button className='bg-blue-600 text-white p-2 rounded'>Search</button>
+          <Input type='text' placeholder='Activity type' />
+          <Button>Search</Button>
         </div>
 
-        <div className='max-h-96 overflow-y-auto'>
-          {activities.map(activity => (
-            <div
-              key={activity.id}
-              className='border rounded p-3 mb-2 hover:bg-gray-50 cursor-pointer flex'
-              onClick={() => onSelect(activity)}
-            >
-              <img
-                src={activity.image || '/placeholder.svg'}
-                alt={activity.name}
-                className='w-24 h-24 object-cover rounded mr-3'
-              />
-              <div className='flex-1'>
-                <div className='font-medium text-lg'>{activity.name}</div>
-                <div className='text-sm text-gray-600'>{activity.location}</div>
-                <div className='flex items-center mt-1'>
-                  <div className='text-yellow-500'>★</div>
-                  <div className='ml-1 text-sm'>{activity.rating}</div>
-                </div>
-                <div className='flex justify-between mt-1'>
-                  <div className='font-bold'>{activity.price}</div>
-                  <div className='text-sm text-gray-600'>
-                    {activity.duration}
+        <ScrollArea className='h-[400px] pr-4'>
+          <div className='space-y-2'>
+            {activities.map(activity => (
+              <Card
+                key={activity.id}
+                className='cursor-pointer hover:bg-accent transition-colors'
+                onClick={() => onSelect(activity)}
+              >
+                <CardContent className='p-4'>
+                  <div className='flex gap-4'>
+                    <img
+                      src={activity.image || '/placeholder.svg'}
+                      alt={activity.name}
+                      className='w-24 h-24 object-cover rounded'
+                    />
+                    <div className='flex-1'>
+                      <div className='font-medium text-lg'>{activity.name}</div>
+                      <div className='text-sm text-muted-foreground'>
+                        {activity.location}
+                      </div>
+                      <div className='flex items-center mt-1'>
+                        <div className='text-yellow-500'>★</div>
+                        <div className='ml-1 text-sm'>{activity.rating}</div>
+                      </div>
+                      <div className='flex justify-between mt-1'>
+                        <div className='font-bold'>{activity.price}</div>
+                        <div className='text-sm text-muted-foreground'>
+                          {activity.duration}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </ScrollArea>
+      </DialogContent>
+    </Dialog>
   )
 }

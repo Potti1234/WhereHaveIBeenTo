@@ -130,6 +130,7 @@ export default function TravelEditor () {
         <FlightSearch
           onSelect={insertFlight}
           onClose={() => setShowFlightSearch(false)}
+          open={showFlightSearch}
         />
       )}
 
@@ -137,6 +138,7 @@ export default function TravelEditor () {
         <HotelSearch
           onSelect={insertHotel}
           onClose={() => setShowHotelSearch(false)}
+          open={showHotelSearch}
         />
       )}
 
@@ -144,6 +146,7 @@ export default function TravelEditor () {
         <ActivitySearch
           onSelect={insertActivity}
           onClose={() => setShowActivitySearch(false)}
+          open={showActivitySearch}
         />
       )}
     </div>
