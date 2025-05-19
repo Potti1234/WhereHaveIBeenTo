@@ -6,6 +6,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import TextAlign from '@tiptap/extension-text-align'
 import History from '@tiptap/extension-history'
+import Document from '@tiptap/extension-document'
 import EditorToolbar from './editor-toolbar'
 import FlightExtension from './extensions/flight-extension'
 import HotelExtension from './extensions/hotel-extension'
@@ -66,10 +67,16 @@ export default function TravelEditor () {
     }
   }
 
+  const CustomDocument = Document.extend({
+    content: 'heading block*'
+  })
+
   const editor = useEditor({
     extensions: [
+      CustomDocument,
       StarterKit.configure({
-        history: false
+        history: false,
+        document: false
       }),
       History.configure({
         depth: 100,
