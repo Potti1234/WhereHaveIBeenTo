@@ -17,6 +17,10 @@ async function fetchActivities({
   currency = 'USD',
   count = 5
 }: Omit<FetchActivitiesParams, 'enabled'>): Promise<ActivitiesAPIResponse> {
+  if (!cityId || cityId === '') {
+    return { products: [], totalCount: 0 }
+  }
+
   const endpointType = idType === 'pb' ? 'pb_city' : 'viator_city'
   const path = `/api/viator/activities/${endpointType}/${cityId}`
 
@@ -46,5 +50,5 @@ export const activitiesQueryOptions = ({
   queryOptions<ActivitiesAPIResponse, Error, ActivitiesAPIResponse, (string | number | undefined)[]>({
     queryKey: ['activities', idType, cityId, currency, count],
     queryFn: () => fetchActivities({ cityId, idType, currency, count }),
-    enabled: enabled && !!cityId 
+    enabled: enabled && !!cityId && cityId !== ''
   }) 

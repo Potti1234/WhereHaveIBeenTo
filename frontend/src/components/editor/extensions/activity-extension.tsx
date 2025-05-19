@@ -1,5 +1,6 @@
 'use client'
 
+import { Activity } from '@/schemas/activity-schema'
 import { Node, mergeAttributes } from '@tiptap/core'
 import {
   ReactNodeViewRenderer,
@@ -9,14 +10,15 @@ import {
 import { MapPin } from 'lucide-react'
 
 const ActivityComponent = ({ node, deleteNode }: NodeViewProps) => {
-  const attrs = node.attrs
+  const attrs = node.attrs as Activity
+  console.log(attrs)
 
   return (
     <NodeViewWrapper>
       <div className='my-4 p-4 border rounded-lg bg-gray-50 flex'>
         <img
           src={attrs.image || '/placeholder.svg'}
-          alt={attrs.name}
+          alt={attrs.title || ''}
           className='w-24 h-24 object-cover rounded mr-4'
         />
 
@@ -45,11 +47,11 @@ const ActivityComponent = ({ node, deleteNode }: NodeViewProps) => {
             </button>
           </div>
 
-          <div className='font-medium text-lg'>{attrs.name}</div>
-          <div className='text-sm text-gray-600'>{attrs.location}</div>
+          <div className='font-medium text-lg'>{attrs.title}</div>
+          <div className='text-sm text-gray-600'>{attrs.description}</div>
           <div className='flex items-center mt-1'>
             <div className='text-yellow-500'>★</div>
-            <div className='ml-1 text-sm'>{attrs.rating}</div>
+            <div className='ml-1 text-sm'>{attrs.review_stars}</div>
           </div>
           <div className='flex justify-between mt-1'>
             <div className='font-bold'>{attrs.price}</div>
@@ -67,14 +69,18 @@ export default Node.create({
   atom: true,
 
   addAttributes () {
+    const defaults: Activity = {
+      id: undefined,
+      title: 'Activity Name',
+      description: 'Location',
+      price: 0,
+      duration: 0,
+      review_stars: 0,
+      image: '/placeholder.svg?height=100&width=150'
+    }
+    console.log(defaults)
     return {
-      id: { default: null },
-      name: { default: 'Activity Name' },
-      location: { default: 'Location' },
-      price: { default: '$0' },
-      duration: { default: '0 hours' },
-      rating: { default: '0.0' },
-      image: { default: '/placeholder.svg?height=100&width=150' }
+      defaults
     }
   },
 

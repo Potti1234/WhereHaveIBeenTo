@@ -16,7 +16,8 @@ import { SlashCommand } from './extensions/slash-command-extension'
 import FlightSearch from './flight-search'
 import HotelSearch from './hotel-search'
 import ActivitySearch from './activity-search'
-import { FlightAttributes, HotelAttributes, ActivityAttributes } from './types'
+import { FlightAttributes, HotelAttributes } from './types'
+import { Activity } from '@/schemas/activity-schema'
 
 export default function TravelEditor () {
   const [showFlightSearch, setShowFlightSearch] = useState(false)
@@ -100,7 +101,8 @@ export default function TravelEditor () {
     setShowHotelSearch(false)
   }
 
-  const insertActivity = (activity: ActivityAttributes) => {
+  const insertActivity = (activity: Activity) => {
+    console.log(activity)
     editor
       ?.chain()
       .focus()

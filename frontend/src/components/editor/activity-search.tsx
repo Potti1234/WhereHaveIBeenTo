@@ -1,4 +1,3 @@
-import { ActivityAttributes } from './types'
 import {
   Dialog,
   DialogContent,
@@ -9,9 +8,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useActivities } from '@/hooks/use-activity'
+import { CityAutocomplete } from '@/components/shared/city-autocomplete'
+import { useState } from 'react'
+import type { CityWithCountryAndState } from '@/schemas/city-schema'
+import { Activity } from '@/schemas/activity-schema'
 
 interface SearchProps {
-  onSelect: (item: ActivityAttributes) => void
+  onSelect: (item: Activity) => void
   onClose: () => void
   open: boolean
 }
@@ -21,39 +25,23 @@ export default function ActivitySearch ({
   onClose,
   open
 }: SearchProps) {
+  const [selectedCity, setSelectedCity] =
+    useState<CityWithCountryAndState | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+
   const handleOpenChange = (openState: boolean) => {
     if (!openState) onClose()
   }
 
-  const activities: ActivityAttributes[] = [
-    {
-      id: 1,
-      name: 'Tokyo Skytree Tour',
-      location: 'Tokyo',
-      price: '$25',
-      duration: '2 hours',
-      rating: 4.6,
-      image: '/placeholder.svg?height=100&width=150'
-    },
-    {
-      id: 2,
-      name: 'Fushimi Inari Shrine Visit',
-      location: 'Kyoto',
-      price: '$15',
-      duration: '3 hours',
-      rating: 4.9,
-      image: '/placeholder.svg?height=100&width=150'
-    },
-    {
-      id: 3,
-      name: 'Osaka Castle Tour',
-      location: 'Osaka',
-      price: '$20',
-      duration: '2 hours',
-      rating: 4.7,
-      image: '/placeholder.svg?height=100&width=150'
-    }
-  ]
+  const { activities } = useActivities({
+    cityId: selectedCity?.id || '',
+    idType: 'pb',
+    enabled: !!selectedCity
+  })
+
+  const handleSearch = () => {
+    // Implement search functionality if needed
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -63,19 +51,20 @@ export default function ActivitySearch ({
         </DialogHeader>
 
         <div className='grid grid-cols-4 gap-2 mb-4'>
-          <Input
-            type='text'
-            placeholder='Location'
-            defaultValue='Tokyo'
-            className='col-span-2'
-          />
-          <Input type='text' placeholder='Activity type' />
-          <Button>Search</Button>
+          <div className='col-span-2'>
+            <CityAutocomplete
+              onSelect={setSelectedCity}
+              placeholder='Select a city...'
+              selectedCityId={selectedCity?.id}
+              disabled={false}
+            />
+          </div>
+          <Button onClick={handleSearch}>Search</Button>
         </div>
 
         <ScrollArea className='h-[400px] pr-4'>
           <div className='space-y-2'>
-            {activities.map(activity => (
+            {activities?.map(activity => (
               <Card
                 key={activity.id}
                 className='cursor-pointer hover:bg-accent transition-colors'
@@ -85,17 +74,21 @@ export default function ActivitySearch ({
                   <div className='flex gap-4'>
                     <img
                       src={activity.image || '/placeholder.svg'}
-                      alt={activity.name}
+                      alt={activity.title || ''}
                       className='w-24 h-24 object-cover rounded'
                     />
                     <div className='flex-1'>
-                      <div className='font-medium text-lg'>{activity.name}</div>
+                      <div className='font-medium text-lg'>
+                        {activity.title}
+                      </div>
                       <div className='text-sm text-muted-foreground'>
-                        {activity.location}
+                        {activity.description}
                       </div>
                       <div className='flex items-center mt-1'>
                         <div className='text-yellow-500'>★</div>
-                        <div className='ml-1 text-sm'>{activity.rating}</div>
+                        <div className='ml-1 text-sm'>
+                          {activity.review_stars}
+                        </div>
                       </div>
                       <div className='flex justify-between mt-1'>
                         <div className='font-bold'>{activity.price}</div>
