@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { useCity } from '@/hooks/use-city'
 import type { CityWithCountryAndState } from '@/schemas/city-schema'
 import { Input } from '@/components/ui/input'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getCitiesThatStartWith, getSearchCityById } from '@/services/api-city'
 
 interface CityAutocompleteProps {
   onSelect: (city: CityWithCountryAndState) => void
@@ -21,19 +21,33 @@ export function CityAutocomplete ({
   const [searchTerm, setSearchTerm] = React.useState('')
   const [cities, setCities] = React.useState<CityWithCountryAndState[]>([])
   const [showDropdown, setShowDropdown] = React.useState(false)
-  const { searchCities, searchCityById } = useCity(selectedCityId || '')
+  const [fetchedSelectedCity, setFetchedSelectedCity] =
+    React.useState<CityWithCountryAndState | null>(null)
 
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
+    if (selectedCityId) {
+      getSearchCityById(selectedCityId).then(city => {
+        if (city) {
+          setFetchedSelectedCity(city)
+          setSearchTerm(city.name || '')
+        }
+      })
+    } else {
+      setFetchedSelectedCity(null)
+    }
+  }, [selectedCityId])
+
+  React.useEffect(() => {
     if (searchTerm) {
-      searchCities(searchTerm).then(setCities)
+      getCitiesThatStartWith(searchTerm).then(setCities)
       setShowDropdown(true)
     } else {
       setCities([])
       setShowDropdown(false)
     }
-  }, [searchTerm, searchCities])
+  }, [searchTerm])
 
   const handleSelect = (city: CityWithCountryAndState) => {
     onSelect(city)
@@ -52,8 +66,6 @@ export function CityAutocomplete ({
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
-
-  const selectedCity = searchCityById
 
   return (
     <div className='relative w-full'>
@@ -77,14 +89,16 @@ export function CityAutocomplete ({
                 key={city.id}
                 className={cn(
                   'flex items-center px-3 py-2 cursor-pointer hover:bg-accent',
-                  selectedCity?.id === city.id && 'bg-accent'
+                  fetchedSelectedCity?.id === city.id && 'bg-accent'
                 )}
                 onClick={() => handleSelect(city)}
               >
                 <Check
                   className={cn(
                     'mr-2 h-4 w-4',
-                    selectedCity?.id === city.id ? 'opacity-100' : 'opacity-0'
+                    fetchedSelectedCity?.id === city.id
+                      ? 'opacity-100'
+                      : 'opacity-0'
                   )}
                 />
                 {city.expand?.country?.iso2 && (

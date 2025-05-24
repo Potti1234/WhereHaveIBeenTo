@@ -11,7 +11,7 @@ export type FetchActivitiesParams = {
 }
 
 // This function fetches data using PocketBase SDK and expects data matching `ActivitiesAPIResponse`
-async function fetchActivities({
+export async function fetchActivities({
   cityId,
   idType,
   currency = 'USD',

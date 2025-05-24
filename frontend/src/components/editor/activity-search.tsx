@@ -5,14 +5,13 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useActivities } from '@/hooks/use-activity'
 import { CityAutocomplete } from '@/components/shared/city-autocomplete'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { CityWithCountryAndState } from '@/schemas/city-schema'
-import { Activity } from '@/schemas/activity-schema'
+import { Activity, ActivitiesAPIResponse } from '@/schemas/activity-schema'
+import { fetchActivities } from '@/services/api-activities'
 
 interface SearchProps {
   onSelect: (item: Activity) => void
@@ -27,17 +26,19 @@ export default function ActivitySearch ({
 }: SearchProps) {
   const [selectedCity, setSelectedCity] =
     useState<CityWithCountryAndState | null>(null)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [activities, setActivities] = useState<Activity[]>([])
 
   const handleOpenChange = (openState: boolean) => {
     if (!openState) onClose()
   }
 
-  const { activities } = useActivities({
-    cityId: selectedCity?.id || '',
-    idType: 'pb',
-    enabled: !!selectedCity
-  })
+  useEffect(() => {
+    if (selectedCity) {
+      fetchActivities({ cityId: selectedCity.id || '', idType: 'pb' }).then(
+        (data: ActivitiesAPIResponse) => setActivities(data.products)
+      )
+    }
+  }, [selectedCity])
 
   const handleSearch = () => {
     // Implement search functionality if needed

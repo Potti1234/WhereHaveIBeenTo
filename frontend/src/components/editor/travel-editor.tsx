@@ -102,7 +102,6 @@ export default function TravelEditor () {
   }
 
   const insertActivity = (activity: Activity) => {
-    console.log(activity)
     editor
       ?.chain()
       .focus()

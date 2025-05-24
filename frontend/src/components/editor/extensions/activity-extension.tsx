@@ -11,7 +11,6 @@ import { MapPin } from 'lucide-react'
 
 const ActivityComponent = ({ node, deleteNode }: NodeViewProps) => {
   const attrs = node.attrs as Activity
-  console.log(attrs)
 
   return (
     <NodeViewWrapper>
@@ -78,10 +77,7 @@ export default Node.create({
       review_stars: 0,
       image: '/placeholder.svg?height=100&width=150'
     }
-    console.log(defaults)
-    return {
-      defaults
-    }
+    return defaults
   },
 
   parseHTML () {
