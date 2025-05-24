@@ -6,9 +6,11 @@ import {
   NodeViewWrapper,
   NodeViewProps
 } from '@tiptap/react'
-import { Globe } from 'lucide-react'
+import { Globe, XIcon } from 'lucide-react'
 import MapComponent, { type Location, type Route } from '../map-component'
 import { useEffect, useState } from 'react'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 // Geocoding API mock - in a real app, you would use a real geocoding service
 const geocodeLocation = async (
@@ -209,39 +211,27 @@ const MapNodeComponent = ({ editor, deleteNode }: NodeViewProps) => {
 
   return (
     <NodeViewWrapper>
-      <div className='my-4 border rounded-lg overflow-hidden'>
-        <div className='flex justify-between items-center p-2 bg-gray-50 border-b'>
-          <div className='flex items-center'>
-            <Globe className='h-5 w-5 mr-2 text-blue-600' />
-            <span className='font-medium'>Trip Map</span>
+      <Card className='my-4 overflow-hidden'>
+        <CardHeader className='flex flex-row items-center justify-between p-2 py-3 bg-muted/50 border-b'>
+          <div className='flex items-center gap-2'>
+            <Globe className='h-5 w-5 text-primary' />
+            {/* <CardTitle className='text-lg'>Trip Map</CardTitle> */}
           </div>
-          <button
-            onClick={deleteNode}
-            className='text-gray-400 hover:text-gray-600'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className='h-5 w-5'
-              viewBox='0 0 20 20'
-              fill='currentColor'
-            >
-              <path
-                fillRule='evenodd'
-                d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z'
-                clipRule='evenodd'
-              />
-            </svg>
-          </button>
-        </div>
+          <Button variant='ghost' size='icon' onClick={deleteNode}>
+            <XIcon className='h-4 w-4' />
+          </Button>
+        </CardHeader>
 
-        <MapComponent locations={locations} routes={routes} height='400px' />
+        <CardContent className='p-0'>
+          <MapComponent locations={locations} routes={routes} height='400px' />
+        </CardContent>
 
-        <div className='p-2 bg-gray-50 border-t text-xs text-gray-500'>
+        <CardFooter className='p-2 py-3 bg-muted/50 border-t text-xs text-muted-foreground'>
           {locations.length === 0
             ? 'Add hotels, activities, and flights to see them on the map'
             : `Showing ${locations.length} locations and ${routes.length} routes`}
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     </NodeViewWrapper>
   )
 }

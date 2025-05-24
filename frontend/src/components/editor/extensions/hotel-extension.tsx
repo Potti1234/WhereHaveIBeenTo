@@ -6,54 +6,55 @@ import {
   NodeViewWrapper,
   NodeViewProps
 } from '@tiptap/react'
-import { Hotel } from 'lucide-react'
+import { Hotel as HotelIcon, Star, XIcon } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const HotelComponent = ({ node, deleteNode }: NodeViewProps) => {
   const attrs = node.attrs
 
   return (
     <NodeViewWrapper>
-      <div className='my-4 p-4 border rounded-lg bg-gray-50 flex'>
-        <img
-          src={attrs.image || '/placeholder.svg'}
-          alt={attrs.name}
-          className='w-24 h-24 object-cover rounded mr-4'
-        />
-
-        <div className='flex-1'>
-          <div className='flex justify-between items-center mb-2'>
-            <div className='flex items-center'>
-              <Hotel className='h-5 w-5 mr-2 text-blue-600' />
-              <span className='font-medium'>Hotel</span>
+      <Card className='my-4 relative'>
+        <CardContent className='p-4 pt-10 flex gap-4'>
+          <Button
+            variant='ghost'
+            size='icon'
+            onClick={deleteNode}
+            className='absolute top-2 right-2'
+          >
+            <XIcon className='h-4 w-4' />
+          </Button>
+          <Avatar className='h-24 w-24 rounded-md'>
+            <AvatarImage
+              src={attrs.image || undefined}
+              alt={attrs.name || 'Hotel image'}
+            />
+            <AvatarFallback className='rounded-md'>
+              {attrs.name?.charAt(0) || 'H'}
+            </AvatarFallback>
+          </Avatar>
+          <div className='flex-1 space-y-1'>
+            <div className='flex items-center gap-2 font-medium text-base'>
+              <HotelIcon className='h-5 w-5 text-primary' />
+              <span>{attrs.name || 'Hotel Name'}</span>
             </div>
-            <button
-              onClick={deleteNode}
-              className='text-gray-400 hover:text-gray-600'
-            >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                className='h-5 w-5'
-                viewBox='0 0 20 20'
-                fill='currentColor'
-              >
-                <path
-                  fillRule='evenodd'
-                  d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z'
-                  clipRule='evenodd'
-                />
-              </svg>
-            </button>
+            <div className='text-sm text-muted-foreground'>
+              {attrs.location || 'Location not specified'}
+            </div>
+            <div className='flex items-center'>
+              <Star className='h-4 w-4 text-yellow-500 fill-yellow-500' />
+              <span className='ml-1 text-xs text-muted-foreground'>
+                {attrs.rating || '0.0'}
+              </span>
+            </div>
+            <div className='font-semibold text-sm pt-1'>
+              {attrs.price || 'Price not available'}
+            </div>
           </div>
-
-          <div className='font-medium text-lg'>{attrs.name}</div>
-          <div className='text-sm text-gray-600'>{attrs.location}</div>
-          <div className='flex items-center mt-1'>
-            <div className='text-yellow-500'>★</div>
-            <div className='ml-1 text-sm'>{attrs.rating}</div>
-          </div>
-          <div className='font-bold mt-1'>{attrs.price}</div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </NodeViewWrapper>
   )
 }
