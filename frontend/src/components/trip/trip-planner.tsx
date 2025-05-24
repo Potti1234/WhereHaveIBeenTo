@@ -37,7 +37,7 @@ export default function TripPlanner (props: {
     }
   })
   const [travelItems, setTravelItems] = useState<ExpandedTravelItemType[]>([])
-  const [tripDays, setTripDays] = useState<TripDayType[]>([])
+  const [tripDays] = useState<TripDayType[]>([])
 
   const { createTrip, updateTrip } = useTrip()
 
@@ -62,7 +62,7 @@ export default function TripPlanner (props: {
       }
       setTravelItems([startTravelItem])
     }
-  }, [props.mode])
+  }, [props.mode, props.trip, props.travelItems])
 
   useEffect(() => {
     setTrip(prevTrip => ({

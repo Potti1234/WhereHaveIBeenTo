@@ -16,7 +16,7 @@ function CountryOverviewPage () {
         countries.filter((c): c is CountryRecord => c.id !== undefined)
       )
     })
-  }, [])
+  }, [getRandomCountryList])
 
   return (
     <ScrollArea className='h-screen w-100%'>

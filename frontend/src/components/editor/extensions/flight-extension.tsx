@@ -67,7 +67,7 @@ const FlightComponent = ({ node, deleteNode }: NodeViewProps) => {
   )
 }
 
-export default Node.create({
+const FlightExtension = Node.create({
   name: 'flightBlock',
   group: 'block',
   atom: true,
@@ -105,3 +105,5 @@ export default Node.create({
     return ReactNodeViewRenderer(FlightComponent)
   }
 })
+
+export default FlightExtension

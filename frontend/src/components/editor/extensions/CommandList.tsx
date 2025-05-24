@@ -14,14 +14,10 @@ export interface CommandListRef {
   onKeyDown: (props: { event: KeyboardEvent }) => boolean
 }
 
-interface CommandListForwardRefProps extends SuggestionProps<CommandItemProps> {
-  // items, command, editor, range, clientRect are from SuggestionProps
-}
-
 const CommandListComponent = forwardRef<
   CommandListRef,
-  CommandListForwardRefProps
->((props: CommandListForwardRefProps, ref) => {
+  SuggestionProps<CommandItemProps>
+>((props: SuggestionProps<CommandItemProps>, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
 
   const selectItem = useCallback(

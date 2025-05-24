@@ -29,7 +29,6 @@ import {
 import useAuth from '@/hooks/use-auth'
 import { Button } from '../ui/button'
 import { Link } from '@tanstack/react-router'
-import ThemeToggle from '@/components/header/theme-toggle'
 import { Theme } from '@/lib/set-theme'
 import { setTheme } from '@/lib/set-theme'
 

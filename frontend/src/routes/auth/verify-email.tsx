@@ -48,7 +48,7 @@ function VerifyEmailPage () {
       verifyEmailByToken(token)
     }
     startEmailSendCountdown({ resetTargetTime: false })
-  }, [])
+  }, [token, verifyEmailByToken, startEmailSendCountdown])
 
   const [handleVerifyEmail, isVerifyingEmail] = useThrottle(
     ({ token }: VerifyEmailFields) => verifyEmailByToken(token)

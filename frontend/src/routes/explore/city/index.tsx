@@ -14,7 +14,7 @@ export default function CityOverviewPage () {
     getRandomCityList(20).then(cities => {
       setCities(cities.filter((c): c is CityRecord => c.id !== undefined))
     })
-  }, [])
+  }, [getRandomCityList])
 
   return (
     <ScrollArea className='h-screen w-100%'>

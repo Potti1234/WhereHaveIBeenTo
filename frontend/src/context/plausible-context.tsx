@@ -33,4 +33,5 @@ function usePlausible () {
   return context
 }
 
-export { PlausibleProvider, usePlausible }
+export { usePlausible }
+export default PlausibleProvider

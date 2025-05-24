@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import Button from '@/components/ui/button'
 import { usePlausible } from '@/context/plausible-context'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -9,7 +9,7 @@ export default function ErrorPage ({ error }: { error: Error }) {
 
   useEffect(() => {
     trackEvent('error', { props: { error: error.message } })
-  }, [])
+  }, [trackEvent, error.message])
 
   return (
     <main className='flex flex-col items-center gap-y-4 text-center'>

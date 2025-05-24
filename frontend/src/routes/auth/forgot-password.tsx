@@ -27,7 +27,7 @@ function ForgotPasswordPage () {
 
   useEffect(() => {
     startEmailSendCountdown({ resetTargetTime: false })
-  }, [])
+  }, [startEmailSendCountdown])
 
   const form = useForm<ForgotPasswordFields>({
     resolver: zodResolver(forgotPasswordSchema),

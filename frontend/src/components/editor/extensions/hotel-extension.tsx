@@ -59,7 +59,7 @@ const HotelComponent = ({ node, deleteNode }: NodeViewProps) => {
   )
 }
 
-export default Node.create({
+const HotelExtension = Node.create({
   name: 'hotelBlock',
   group: 'block',
   atom: true,
@@ -94,3 +94,5 @@ export default Node.create({
     return ReactNodeViewRenderer(HotelComponent)
   }
 })
+
+export default HotelExtension

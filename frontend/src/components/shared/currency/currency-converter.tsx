@@ -34,7 +34,7 @@ export function CurrencyConverter ({
       updateToAmount(fromAmount, conversion)
     }
     fetchRate()
-  }, [fromCurrency, toCurrency])
+  }, [fromCurrency, toCurrency, fromAmount, getCurrencyConversionFromTo])
 
   const updateToAmount = (amount: string, currentRate: number) => {
     const numAmount = parseFloat(amount) || 0

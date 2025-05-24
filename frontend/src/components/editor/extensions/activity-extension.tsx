@@ -67,7 +67,7 @@ const ActivityComponent = ({ node, deleteNode }: NodeViewProps) => {
   )
 }
 
-export default Node.create({
+const ActivityExtension = Node.create({
   name: 'activityBlock',
   group: 'block',
   atom: true,
@@ -104,3 +104,5 @@ export default Node.create({
     return ReactNodeViewRenderer(ActivityComponent)
   }
 })
+
+export default ActivityExtension
