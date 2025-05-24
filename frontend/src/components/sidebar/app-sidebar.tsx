@@ -6,8 +6,8 @@ import { Command, LifeBuoy, Map, Send, Luggage } from 'lucide-react'
 import { NavMain } from '@/components/sidebar/nav-main'
 import { NavSecondary } from '@/components/sidebar/nav-secondary'
 import { NavUser } from '@/components/sidebar/nav-user'
+import Sidebar from '@/components/ui/sidebar'
 import {
-  Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,

@@ -1,4 +1,4 @@
-import Button from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { usePlausible } from '@/context/plausible-context'
 import { createFileRoute, useLocation, useRouter } from '@tanstack/react-router'
 import { useEffect } from 'react'
