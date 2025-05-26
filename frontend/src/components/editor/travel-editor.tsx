@@ -18,6 +18,7 @@ import HotelSearch from './hotel-search'
 import ActivitySearch from './activity-search'
 import { FlightAttributes, HotelAttributes } from './types'
 import { Activity } from '@/schemas/activity-schema'
+import CurrencyConverterExtension from './extensions/currency-converter-extension'
 
 export default function TravelEditor () {
   const [showFlightSearch, setShowFlightSearch] = useState(false)
@@ -31,6 +32,12 @@ export default function TravelEditor () {
     addMap: () => {
       editor?.commands.insertContent({
         type: 'mapBlock',
+        attrs: {}
+      })
+    },
+    addCurrencyConverter: () => {
+      editor?.commands.insertContent({
+        type: 'currencyConverterBlock',
         attrs: {}
       })
     }
@@ -63,7 +70,8 @@ export default function TravelEditor () {
       MapExtension,
       SlashCommand.configure({
         commandActions
-      })
+      }),
+      CurrencyConverterExtension
     ],
     content: `
       <h1>Start Planning Your Trip</h1>
@@ -121,6 +129,7 @@ export default function TravelEditor () {
         onHotelClick={() => setShowHotelSearch(true)}
         onActivityClick={() => setShowActivitySearch(true)}
         onMapClick={commandActions.addMap}
+        onCurrencyConverterClick={commandActions.addCurrencyConverter}
       />
 
       <div className='flex-1 overflow-y-auto relative min-h-0'>

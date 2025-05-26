@@ -16,7 +16,8 @@ import {
   Globe,
   Undo2,
   Redo2,
-  ChevronDown
+  ChevronDown,
+  DollarSign
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -40,6 +41,7 @@ interface EditorToolbarProps {
   onHotelClick: () => void
   onActivityClick: () => void
   onMapClick: () => void
+  onCurrencyConverterClick: () => void
 }
 
 export default function EditorToolbar ({
@@ -47,7 +49,8 @@ export default function EditorToolbar ({
   onFlightClick,
   onHotelClick,
   onActivityClick,
-  onMapClick
+  onMapClick,
+  onCurrencyConverterClick
 }: EditorToolbarProps) {
   if (!editor) {
     return null
@@ -272,6 +275,9 @@ export default function EditorToolbar ({
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onMapClick}>
               <Globe className='h-4 w-4 mr-2' /> Map
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onCurrencyConverterClick}>
+              <DollarSign className='h-4 w-4 mr-2' /> Currency Converter
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

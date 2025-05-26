@@ -17,7 +17,8 @@ import {
   Heading3,
   List,
   ListOrdered,
-  Quote
+  Quote,
+  DollarSign
 } from 'lucide-react'
 
 import CommandListComponent, { CommandListRef } from './CommandList'
@@ -113,6 +114,11 @@ const getItems = (
       title: 'Map',
       icon: <Globe size={18} />,
       action: () => commandActions.addMap()
+    },
+    {
+      title: 'Currency Converter',
+      icon: <DollarSign size={18} />,
+      action: () => commandActions.addCurrencyConverter()
     }
   ]
 
@@ -135,7 +141,11 @@ const SlashCommandSuggestionOptions: Partial<
   startOfLine: false,
   command: ({ editor, range, props }) => {
     props.action({ editor, range })
-    if (['Flight', 'Hotel', 'Activity'].includes(props.title)) {
+    if (
+      ['Flight', 'Hotel', 'Activity', 'Currency Converter', 'Map'].includes(
+        props.title
+      )
+    ) {
       editor.chain().focus().deleteRange(range).run()
     }
   },
@@ -230,6 +240,9 @@ export const SlashCommand = Extension.create<SlashCommandOptions>({
         },
         addMap: () => {
           console.warn('addMap not implemented')
+        },
+        addCurrencyConverter: () => {
+          console.warn('addCurrencyConverter not implemented')
         }
       },
       suggestion: SlashCommandSuggestionOptions
