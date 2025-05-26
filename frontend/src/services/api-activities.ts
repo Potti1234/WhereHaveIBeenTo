@@ -35,9 +35,12 @@ export async function fetchActivities({
   // Parse the response directly using the expected schema
   // pb.send already returns parsed JSON, so no need for response.json()
   // Error handling is implicitly handled by pb.send which throws on non-2xx responses
-  const parsedData = activitiesAPIResponseSchema.parse(rawData)
-
-  return parsedData
+  try {
+    const parsedData = activitiesAPIResponseSchema.parse(rawData)
+    return parsedData
+  } catch (error) {
+    return { products: [], totalCount: 0 }
+  }
 }
 
 export const activitiesQueryOptions = ({
