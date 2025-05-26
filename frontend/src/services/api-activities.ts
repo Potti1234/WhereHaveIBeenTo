@@ -38,7 +38,7 @@ export async function fetchActivities({
   try {
     const parsedData = activitiesAPIResponseSchema.parse(rawData)
     return parsedData
-  } catch (error) {
+  } catch {
     return { products: [], totalCount: 0 }
   }
 }
