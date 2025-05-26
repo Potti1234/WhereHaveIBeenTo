@@ -6,7 +6,7 @@ import { getCurrencies } from '@/services/api-currency'
 import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { XIcon } from 'lucide-react'
+import { XIcon, ArrowRightLeft } from 'lucide-react'
 import { Currency } from '@/schemas/currency-schema'
 import { errorToast } from '@/lib/toast'
 import { CurrencyAutocomplete } from '@/components/shared/currency/currency-autocomplete'
@@ -50,32 +50,43 @@ export const CurrencyConverterNode = ({
   useEffect(() => {
     if (!allCurrencies || !fromCurrency || !toCurrency) {
       setRate(undefined)
-      return
-    }
-
-    const fromRate = allCurrencies.find(
-      currency => currency.code === fromCurrency
-    )?.rate
-    const toRate = allCurrencies.find(
-      currency => currency.code === toCurrency
-    )?.rate
-
-    if (fromRate === undefined || toRate === undefined || fromRate === 0) {
-      errorToast('Could not calculate conversion rate', 'Invalid currency data')
-      setRate(undefined)
-      if (fromRate === undefined || toRate === undefined) {
+      if (!fromAmount || parseFloat(fromAmount) === 0) {
         setToAmount('')
         updateAttributes({ toAmount: '' })
       }
       return
     }
 
-    const calculatedRate = toRate / fromRate
+    const fromCurrencyData = allCurrencies.find(
+      currency => currency.code === fromCurrency
+    )
+    const toCurrencyData = allCurrencies.find(
+      currency => currency.code === toCurrency
+    )
+
+    if (
+      !fromCurrencyData ||
+      !toCurrencyData ||
+      !fromCurrencyData.rate ||
+      !toCurrencyData.rate ||
+      fromCurrencyData.rate === 0
+    ) {
+      errorToast(
+        'Could not calculate conversion rate',
+        'Invalid currency data for rate calculation'
+      )
+      setRate(undefined)
+      setToAmount('')
+      updateAttributes({ toAmount: '' })
+      return
+    }
+
+    const calculatedRate = toCurrencyData.rate / fromCurrencyData.rate
     setRate(calculatedRate)
     if (calculatedRate !== undefined) {
       updateToAmount(fromAmount, calculatedRate)
     }
-  }, [fromCurrency, toCurrency, allCurrencies, fromAmount])
+  }, [fromCurrency, toCurrency, allCurrencies, fromAmount, updateAttributes])
 
   const updateToAmount = (amount: string, currentRate: number) => {
     const numAmount = parseFloat(amount) || 0
@@ -114,6 +125,17 @@ export const CurrencyConverterNode = ({
     setToCurrency(value)
   }
 
+  const handleSwitchCurrencies = () => {
+    const oldFromCurrency = fromCurrency
+    const oldToCurrency = toCurrency
+    const oldToAmount = toAmount
+
+    setFromCurrency(oldToCurrency)
+    setToCurrency(oldFromCurrency)
+
+    setFromAmount(oldToAmount)
+  }
+
   return (
     <NodeViewWrapper>
       <Card className='my-4 relative'>
@@ -126,7 +148,7 @@ export const CurrencyConverterNode = ({
           >
             <XIcon className='h-4 w-4' />
           </Button>
-          <div className='flex gap-4'>
+          <div className='flex items-center gap-2'>
             <div className='flex-1 space-y-2'>
               <CurrencyAutocomplete
                 allCurrencies={allCurrencies}
@@ -143,6 +165,16 @@ export const CurrencyConverterNode = ({
                 disabled={!allCurrencies}
               />
             </div>
+
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={handleSwitchCurrencies}
+              disabled={!allCurrencies || !fromCurrency || !toCurrency}
+              className='mt-auto mb-4'
+            >
+              <ArrowRightLeft className='h-5 w-5' />
+            </Button>
 
             <div className='flex-1 space-y-2'>
               <CurrencyAutocomplete
